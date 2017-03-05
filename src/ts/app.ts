@@ -3,10 +3,9 @@ import '../scss/main.scss';
 class Greeter {
     constructor(public greeting: string) { }
     greet() {
-        return '<h1>' + this.greeting + '</h1>';
+        console.log(this.greeting);
     }
 };
 
-const greeter = new Greeter('Hello, my friend! Checkout your first ts app!');
-
-document.body.innerHTML = greeter.greet();
+const greeter = new Greeter('Hello, my friend! Checkout your first ts app!!!');
+greeter.greet();
