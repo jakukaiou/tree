@@ -31,9 +31,18 @@ module.exports = {
             test: /\.ts$/,
             loader: 'ts-loader'
         }, {
+            test: /\.css$/,
+            loader: ExtractTextPlugin.extract(['css'])
+        }, {
             test: /\.scss$/,
             loader: ExtractTextPlugin.extract(['css', 'postcss', 'sass'])
-        }]
+        },{
+            test: /\.sass$/,
+            loader: ExtractTextPlugin.extract(['css', 'postcss', 'sass'])
+        },
+        { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "url-loader?limit=10000&mimetype=application/font-woff" },
+        { test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "file-loader" }
+      ]
     },
     plugins: [
         new ExtractTextPlugin('[name].css'),

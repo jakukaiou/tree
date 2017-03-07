@@ -1,0 +1,71 @@
+$defaultLineColor: #464446;
+$disableLineColor: #c6c4c6;
+
+.tree-node {
+    border-color: $defaultLineColor;
+    border-style: solid;
+    border-width: 1px;
+    padding: 0;
+    box-shadow: 1px 4px 5px rgba(0, 0, 0, 0.4);
+}
+
+.tree-content-header_holder {
+    height: 40px;
+}
+
+.tree-content-header {
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1), 0 1px 0 rgba(0, 0, 0, 0.1);
+    background-color: #f4f1ce;
+    background-image: linear-gradient(#fffdf4, #fff0f2);
+    width: 100%;
+    height: 40px;
+    display: inline-flex;
+}
+
+.tree-content-header.is-fixed {
+    position: fixed;
+    top: 0;
+}
+
+.tree-content-header_toggle {
+    padding: 0 10px;
+    font-size: 26px;
+    position: relative;
+    border-right: groove 1px rgba(0, 0, 0, 0.1);
+}
+
+.tree-content-header_title {
+    padding: 5px 10px;
+    font-size: 20px;
+    color: #666;
+}
+
+.tree-content-header_prev {
+    padding: 0 10px;
+    font-size: 26px;
+    position: relative;
+    height: 40px;
+}
+
+.tree-content-header_next {
+    padding: 0 10px;
+    font-size: 26px;
+    position: relative;
+    height: 40px;
+}
+
+.tree-content-header_pager {
+    height: 40px;
+    margin-left: auto;
+    border-left: groove 1px rgba(0, 0, 0, 0.1);
+}
+
+.tree-node.parent {
+    border-color: $disableLineColor;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.tree-node.parent.is-active {
+    border-color: $defaultLineColor;
+}
