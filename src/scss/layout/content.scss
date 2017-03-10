@@ -1,3 +1,37 @@
-.tree-node .container .tree-content {
-    padding: 1rem;
+.tree-node .tree-contents .tree-content {
+    padding: 2rem;
+}
+
+.tree-node .tree-contents .tree-content .tree-content-title-container {
+    display: flex;
+    padding-bottom: 20px;
+}
+
+.tree-node .tree-contents .tree-content .tree-content-title {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ここに入るコンテンツは未定 */
+.tree-node .tree-contents .tree-content .tree-content-title .tree-message {
+    flex: 1;
+}
+
+.tree-node .tree-contents .tree-content .tree-content-title .tree-content-title-main .tree-title-string {
+    width: 80%;
+    padding-bottom: 20px;
+    border-bottom: groove 1px rgba(0, 0, 0, 0.1);
+}
+
+.tree-node .tree-contents .tree-content .tree-content-ad {
+    margin-left: auto;
+}
+
+.tree-node .tree-contents .tree-content ul {
+    margin-top: 0;
+}
+
+.tree-node .tree-contents .tree-content h4 {
+    padding: 10px;
 }
