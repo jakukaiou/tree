@@ -4,6 +4,7 @@ var autoprefixer = require('autoprefixer');
 var sassPath = path.resolve(__dirname, 'src/scss');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var StyleLintPlugin = require('stylelint-webpack-plugin');
+var webpack = require('webpack');
 
 module.exports = {
     entry: {
@@ -29,7 +30,7 @@ module.exports = {
           }],
         loaders: [{
             test: /\.ts$/,
-            loader: 'ts-loader'
+            loader: 'awesome-typescript-loader'
         }, {
             test: /\.css$/,
             loader: ExtractTextPlugin.extract(['css'])
@@ -51,6 +52,9 @@ module.exports = {
           syntax: 'scss',
           files: ['**/*.s?(a|c)ss'],
           failOnError: false,
+        }),
+        new webpack.ProvidePlugin({
+            __extends: 'typescript-extends'
         })
     ],
     tslint: {

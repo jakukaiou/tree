@@ -23,11 +23,11 @@
         "variable-declaration": "nospace"
       },
       {
-        "call-signature": "space",
-        "index-signature": "space",
-        "parameter": "space",
-        "property-declaration": "space",
-        "variable-declaration": "space"
+        "call-signature": "nospace",
+        "index-signature": "nospace",
+        "parameter": "nospace",
+        "property-declaration": "nospace",
+        "variable-declaration": "nospace"
       }
     ],
 
@@ -73,7 +73,7 @@
     ],
     "max-line-length": [
       true,
-      100
+      200
     ],
     "no-require-imports": false,
     "no-trailing-whitespace": true,
@@ -115,14 +115,6 @@
       "check-format",
       "allow-leading-underscore",
       "ban-keywords"
-    ],
-    "whitespace": [
-      true,
-      "check-branch",
-      "check-decl",
-      "check-operator",
-      "check-separator",
-      "check-type"
     ]
   }
 }

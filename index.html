@@ -5,6 +5,16 @@
     <title> TypeScript and Sass Webpack Boilerplate </title>
     <link rel="stylesheet" href="build/app.css" media="screen" title="no title">
     <script src='build/app.js'></script>
+    <!--MathJaxプラグイン-->
+    <script type="text/javascript" src="node_modules/mathjax/MathJax.js?config=TeX-AMS_CHTML"></script>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [['$$$','$$$']],
+          displayMath: [['$$$$','$$$$']]
+          }
+    });
+    </script>
   </head>
   <body>
     <nav class="nav tree-nav">
@@ -82,9 +92,11 @@
 
         <div class="content tree-content">
           <div class="tree-content-title-container">
+            <!--縮小時に縦並びにするように変更する-->
             <div class="tree-content-title">
               <div class="tree-message">
-                この部分に入るコンテンツは未定
+                この部分に入るコンテンツは未定<br>
+                When $$$a \ne 0$$$, there are two solutions to $$$ax^2 + bx + c = 0$$$ and they are $$$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$$
               </div>
               <h2 class="tree-content-title-main">
                   <div class="tree-title-string">
@@ -92,13 +104,29 @@
                   </div>
                 </h2>
             </div>
+
             <div class="tree-content-ad google-ad-rectangle"></div>
           </div>
 
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla accumsan, metus ultrices eleifend gravida, nulla nunc varius lectus, nec rutrum justo nibh eu lectus. Ut vulputate semper dui. Fusce erat odio, sollicitudin vel erat vel, interdum mattis neque.</p>
-          <h4>1-1. Mithril.jsの役割</h4>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla accumsan, metus ultrices eleifend gravida, nulla nunc varius lectus, nec rutrum justo nibh eu lectus. Ut vulputate semper dui. Fusce erat odio, sollicitudin vel erat vel, interdum mattis neque.</p>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla accumsan, metus ultrices eleifend gravida, nulla nunc varius lectus, nec rutrum justo nibh eu lectus. Ut vulputate semper dui. Fusce erat odio, sollicitudin vel erat vel, interdum mattis neque.</p>
+          <p>
+            Mithril.jsは、VirtualDOMの技術を利用した、クライアントサイドのJavascriptフレームワークです。
+            SPAをはじめとしたWebアプリケーションの作成を強力にサポートします。
+            Mithrilはその他のVirtual DOMフレームワークと比較して、APIの数が少なく動作が高速という点が勝っています。
+            余計な機能がないのでファイルサイズも軽量で、他の様々なライブラリやコンポーネントとの統合も容易です。
+          </p>
+          <p>
+            逆に言えば、Angular等のそれ単体でアプリケーションを完成させることのできるものとは異なり、Mithril単体で多くをこなすことはできません。
+            ある程度の規模のアプリケーション作成では、その他の様々なライブラリに頼ったり、自分で必要な機能を実装したりという機会がより多くなります。
+            そのため、Javascriptに関する幅広い知識や、ライブラリの選定作業が必要になる傾向があります。
+          </p>
+          <h4>1-1. Hello World</h4>
+          <p>
+            まずは、Mithrilを使ってHello Worldアプリケーションを作ってみましょう。
+          </p>
+
+          <div class="tree-ace-module highlight" id="aceedit"></div>
+          <div class="tree-ace-module playground" id="playGround"></div>
+
           <div class="block">
             <a class="button is-primary tree-next">
               <i class="fa fa-angle-double-right" aria-hidden="true"></i> 2.Mithril.jsのビューモデル
