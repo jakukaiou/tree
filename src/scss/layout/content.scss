@@ -3,7 +3,6 @@
 }
 
 .tree-node .tree-contents .tree-content .tree-content-title-container {
-    display: flex;
     padding-bottom: 20px;
 }
 
@@ -11,11 +10,16 @@
     flex: 1;
     display: flex;
     flex-direction: column;
+    height: 100%;
 }
 
 /* ここに入るコンテンツは未定 */
 .tree-node .tree-contents .tree-content .tree-content-title .tree-message {
     flex: 1;
+}
+
+.tree-node .tree-contents .tree-content .tree-content-title .tree-content-title-main {
+    bottom: 0;
 }
 
 .tree-node .tree-contents .tree-content .tree-content-title .tree-content-title-main .tree-title-string {

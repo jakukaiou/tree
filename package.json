@@ -21,6 +21,8 @@
   "license": "MIT",
   "devDependencies": {
     "@types/ace": "0.0.32",
+    "@types/lodash": "^4.14.55",
+    "@types/mithril": "github:spacejack/mithril.d.ts#1.0.2",
     "autoprefixer": "^6.5.1",
     "awesome-typescript-loader": "^3.1.2",
     "brace": "^0.10.0",
@@ -38,7 +40,9 @@
     "karma-phantomjs-launcher": "^1.0.2",
     "karma-webpack": "^1.8.0",
     "less": "^2.7.2",
+    "lodash": "^4.17.4",
     "mathjax": "^2.7.0",
+    "mithril": "^1.0.1",
     "mocha": "^3.1.2",
     "node-sass": "^3.10.1",
     "phantomjs": "^2.1.7",
