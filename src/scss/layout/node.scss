@@ -79,6 +79,10 @@ $defaultLineColor: #464446;
     padding: 10px 20px;
 }
 
+.tree-node.sub .tree-contents .tree-content .tag {
+    margin: 0 3px;
+}
+
 .tree-node.sub .tree-contents .tree-content .tag:hover {
     background-color: #464446;
 }

@@ -1,3 +1,4 @@
+//TODO 1ノートのデータ渡し実装とルーティング実装
 /// <reference path="../../node_modules/@types/lodash/index.d.ts" />
 
 import '../scss/main.scss';
@@ -85,10 +86,72 @@ class TreeLink extends ComponentBasic {
     }
 }
 
+class TreeMainNodeModal extends ComponentBasic {
+    constructor() {
+        super();
+
+        this.view = (vnode)=> {
+            return [m('.modal', [
+                        m('.modal-background'),
+                        m('.modal-card', [
+                            m('header.modal-card-head', [
+                                m('p.modal-card-title', 'Mithril.js')
+                            ]),
+                            m('section.modal-card-body', [
+                                m('.content', [
+                                    m('ol', [
+                                        m('li', [m('a', 'Mithril.jsとは？')]),
+                                        m('li', [
+                                            m('a', 'Mithril.jsのビューモデル'),
+                                            m('ul', [
+                                                m('li', 'In fermentum leo eu lectus mollis, quis dictum mi aliquet.'),
+                                                m('li', 'Morbi eu nulla lobortis, lobortis est in, fringilla felis.')
+                                            ])
+                                        ]),
+                                        m('li', 'Integer in volutpat libero.'),
+                                        m('li', 'Donec a diam tellus.')
+                                    ])
+                                ])
+                            ]),
+                            m('footer.modal-card-foot', [
+                                
+                            ]),
+                            m('button.modal-close')
+                        ])
+                    ])];
+        };
+    }
+}
+
 class TreeMainNodeHeader extends ComponentBasic {
 
     constructor(nodeTitle:string,pageTitle) {
         super();
+
+        this.oncreate = (vnode)=> {
+            //メインヘッダーのスクロール追従
+            let scrollPos = document.getElementById('tree-content-header').getBoundingClientRect().top;
+
+            window.addEventListener('scroll' , ()=> {
+                if (window.pageYOffset > scrollPos) {
+                    document.getElementById('tree-content-header').classList.add('is-fixed');
+                }else {
+                    document.getElementById('tree-content-header').classList.remove('is-fixed');
+                }
+            }, false);
+
+            document.querySelector('.tree-content-header #open').addEventListener('click',()=> {
+                document.querySelector('.tree-node.main .modal').classList.add('is-active');
+            });
+
+            document.querySelector('.tree-node.main .modal .modal-background').addEventListener('click',()=> {
+                document.querySelector('.tree-node.main .modal').classList.remove('is-active');
+            });
+
+            document.querySelector('.tree-node.main .modal .modal-close').addEventListener('click',()=> {
+                document.querySelector('.tree-node.main .modal').classList.remove('is-active');
+            });
+        }
 
         this.view = (vnode)=> {
             return [m('div.tree-content-header_holder', [
@@ -106,7 +169,9 @@ class TreeMainNodeHeader extends ComponentBasic {
                                 ])
                             ])
                         ])
-                    ])];
+                    ]),
+                    m(new TreeMainNodeModal())
+                    ];
         };
     }
 }
@@ -117,23 +182,43 @@ class TreeComponentVnode extends ComponentBasic {
     constructor(data:Object) {
         super();
         this.oncreate = (vnode)=> {
-            if(data['type'] == COMPONENT.HIGHLIGHT){
-                let highlight = new Highlight('#'+data['id'],{
-                    laungage: 'html',
-                    source: '<!doctype html>\n' +
-                            '<body>\n' +
-                            '   <script src="//unpkg.com/mithril/mithril.js"></script>\n' +
-                            '       <script>\n' +
-                            '       var root = document.body\n' +
-                            '       // your code goes here!\n' +
-                            '       </script>\n' +
-                            '</body>'
-                });
+            switch(data['type']) {
+                case COMPONENT.HIGHLIGHT: {
+                    let highlight = new Highlight('#'+data['id'],{
+                        laungage: 'html',
+                        source: '<!doctype html>\n' +
+                                '<body>\n' +
+                                '   <script src="//unpkg.com/mithril/mithril.js"></script>\n' +
+                                '       <script>\n' +
+                                '       var root = document.body\n' +
+                                '       // your code goes here!\n' +
+                                '       </script>\n' +
+                                '</body>'
+                    });
+                    break;
+                }
+                case COMPONENT.PLAYGROUND: {
+                    let playground = new PlayGround('#'+data['id'],{
+                        htmlsource: '<h1>Hello World!</h1>',
+                        csssource:  'h1 {\n' +
+                                    '   color: #f00;\n' +
+                                    '}',
+                        jssource:   'console.log("Hello World");'
+                    });
+                    break;
+                }
             }
         };
 
         this.view = (vnode)=> {
-            return [m('div.tree-ace-module.highlight[id="' + data['id'] + '"]')];
+            switch(data['type']) {
+                case COMPONENT.HIGHLIGHT: {
+                    return [m('div.tree-ace-module.highlight[id="' + data['id'] + '"]')];
+                }
+                case COMPONENT.PLAYGROUND: {
+                    return [m('div.tree-ace-module.playground[id="' + data['id'] + '"]')];
+                }
+            }
         };
     }
 }
@@ -159,6 +244,9 @@ class TreeMainNodeContent extends ComponentBasic {
             'Mithrilはその他のVirtual DOMフレームワークと比較して、APIの数が少なく動作が高速という点が勝っています。' +
             '余計な機能がないのでファイルサイズも軽量で、他の様々なライブラリやコンポーネントとの統合も容易です。';
         this.contentArray[1] = {id:'aceedit',type:COMPONENT.HIGHLIGHT};
+        this.contentArray[2] =
+            'この文章は、コンポーネントのあいだに配置されています。';
+        this.contentArray[3] = {id:'playground',type:COMPONENT.PLAYGROUND};
 
         this.view = (vnode)=> {
             return [m('div.content.tree-content',[
@@ -268,49 +356,3 @@ class TreeApplication {
 }
 
 new TreeApplication();
-
-/*
-window.onload = function(){
-    let scrollPos = document.getElementById('tree-content-header').getBoundingClientRect().top;
-
-    window.addEventListener('scroll' , ()=> {
-        if (window.pageYOffset > scrollPos) {
-            document.getElementById('tree-content-header').classList.add('is-fixed');
-        }else {
-            document.getElementById('tree-content-header').classList.remove('is-fixed');
-        }
-    }, false);
-
-    document.querySelector('.tree-content-header #open').addEventListener('click',()=> {
-        document.querySelector('.tree-node.main .modal').classList.add('is-active');
-    });
-
-    document.querySelector('.tree-node.main .modal .modal-background').addEventListener('click',()=> {
-        document.querySelector('.tree-node.main .modal').classList.remove('is-active');
-    });
-
-    document.querySelector('.tree-node.main .modal .modal-close').addEventListener('click',()=> {
-        document.querySelector('.tree-node.main .modal').classList.remove('is-active');
-    });
-
-    let highlight = new Highlight('#aceedit',{
-        laungage: 'html',
-        source: '<!doctype html>\n' +
-                '<body>\n' +
-                '   <script src="//unpkg.com/mithril/mithril.js"></script>\n' +
-                '       <script>\n' +
-                '       var root = document.body\n' +
-                '       // your code goes here!\n' +
-                '       </script>\n' +
-                '</body>'
-    });
-
-    let playground = new PlayGround('#playGround',{
-        htmlsource: '<h1>Hello World!</h1>',
-        csssource:  'h1 {\n' +
-                    '   color: #f00;\n' +
-                    '}',
-        jssource:   'console.log("Hello World");'
-    });
-};
-*/
