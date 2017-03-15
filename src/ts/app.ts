@@ -42,6 +42,11 @@ class TreeHeader extends ComponentBasic {
     constructor() {
         super();
 
+        this.oncreate = (vnode)=> {
+            //スクロールのリセット処理
+            window.scrollTo(0,0);
+        }
+
         this.view = (vnode)=> {
         return  [m('nav.nav.tree-nav', [
                     m('.nav-left', [
@@ -125,7 +130,7 @@ class TreeMainNodeModal extends ComponentBasic {
 
 class TreeMainNodeHeader extends ComponentBasic {
 
-    constructor(nodeTitle:string,pageTitle) {
+    constructor(nodeTitle:string,pageTitles:Array<string>,pageNumber:number) {
         super();
 
         this.oncreate = (vnode)=> {
@@ -159,7 +164,7 @@ class TreeMainNodeHeader extends ComponentBasic {
                             m('a.tree-content-header_toggle[id="open"]', [
                                 m('i.fa.fa-book[aria-hidden="true"]')
                             ]),
-                            m('span.tree-content-header_title', [nodeTitle,m('small', pageTitle)]),
+                            m('span.tree-content-header_title', [nodeTitle,m('small', pageTitles[pageNumber])]),
                             m('div.tree-content-header_pager', [
                                 m('a.tree-content-header_prev[id="open"]', [
                                     m('i.fa.fa-angle-left[aria-hidden="true]')
@@ -184,27 +189,11 @@ class TreeComponentVnode extends ComponentBasic {
         this.oncreate = (vnode)=> {
             switch(data['type']) {
                 case COMPONENT.HIGHLIGHT: {
-                    let highlight = new Highlight('#'+data['id'],{
-                        laungage: 'html',
-                        source: '<!doctype html>\n' +
-                                '<body>\n' +
-                                '   <script src="//unpkg.com/mithril/mithril.js"></script>\n' +
-                                '       <script>\n' +
-                                '       var root = document.body\n' +
-                                '       // your code goes here!\n' +
-                                '       </script>\n' +
-                                '</body>'
-                    });
+                    let highlight = new Highlight('#'+data['id'],data['data']);
                     break;
                 }
                 case COMPONENT.PLAYGROUND: {
-                    let playground = new PlayGround('#'+data['id'],{
-                        htmlsource: '<h1>Hello World!</h1>',
-                        csssource:  'h1 {\n' +
-                                    '   color: #f00;\n' +
-                                    '}',
-                        jssource:   'console.log("Hello World");'
-                    });
+                    let playground = new PlayGround('#'+data['id'],data['data']);
                     break;
                 }
             }
@@ -226,7 +215,7 @@ class TreeComponentVnode extends ComponentBasic {
 class TreeMainNodeContent extends ComponentBasic {
     private contentArray:Array<any>;
 
-    constructor() {
+    constructor(contentArray:Array<any>) {
         super();
 
         let makeContentVnode = (content:any)=> {
@@ -237,16 +226,7 @@ class TreeMainNodeContent extends ComponentBasic {
             }
         };
 
-        this.contentArray = new Array();
-        this.contentArray[0] =
-            'Mithril.jsは、VirtualDOMの技術を利用した、クライアントサイドのJavascriptフレームワークです。' +
-            'SPAをはじめとしたWebアプリケーションの作成を強力にサポートします。' +
-            'Mithrilはその他のVirtual DOMフレームワークと比較して、APIの数が少なく動作が高速という点が勝っています。' +
-            '余計な機能がないのでファイルサイズも軽量で、他の様々なライブラリやコンポーネントとの統合も容易です。';
-        this.contentArray[1] = {id:'aceedit',type:COMPONENT.HIGHLIGHT};
-        this.contentArray[2] =
-            'この文章は、コンポーネントのあいだに配置されています。';
-        this.contentArray[3] = {id:'playground',type:COMPONENT.PLAYGROUND};
+        this.contentArray = contentArray;
 
         this.view = (vnode)=> {
             return [m('div.content.tree-content',[
@@ -280,14 +260,18 @@ class TreeMainNodeContentTitle extends ComponentBasic {
 }
 
 class TreeMainNode extends ComponentBasic {
-    constructor() {
+    constructor(nodeID:number, nodePage:number) {
         super();
+
+        let nodePageTitles = _.map(nodePages[nodeID],(pageInfo)=>{
+            return pageInfo['title'];
+        });
 
         this.view = (vnode)=> {
             return [m('div.section.tree-node.main',[
                         m('div.tree-contents',[
-                            m(new TreeMainNodeHeader('Mithril.js','Mithril.jsとは？')),
-                            m(new TreeMainNodeContent())
+                            m(new TreeMainNodeHeader(nodeData[nodeID]['title'],nodePageTitles,nodePage)),
+                            m(new TreeMainNodeContent(nodePages[nodeID][nodePage]['contents']))
                         ]),
             ])];
         };
@@ -298,7 +282,7 @@ class TreeSubNode extends ComponentBasic {
     private relation:SUB;
     private title:string;
 
-    constructor(relation:SUB,tags:Array<string>) {
+    constructor(relation:SUB,tags:Array<number>) {
         super();
 
         this.relation = relation;
@@ -308,8 +292,8 @@ class TreeSubNode extends ComponentBasic {
             this.title = 'next-node';
         }
 
-        let makeTagVnode = (content:string)=> {
-            return m('a.tag.is-black',content);
+        let makeTagVnode = (tagId:number)=> {
+            return m('a.tag.is-black',{href:'#!tree/'+tagId+'/0'},nodeData[tagId]['title']);
         };
 
         this.relation = relation;
@@ -332,13 +316,15 @@ class TreeRoot extends ComponentBasic {
         super();
 
         this.view = (vnode)=> {
+            console.log(vnode.attrs);
+
             return [m(new TreeHeader()),
                     m(new TreeLink()),
-                    m(new TreeSubNode(SUB.PARENT,['sambo','master'])),
+                    m(new TreeSubNode(SUB.PARENT,nodeData[vnode.attrs['id']]['prev'])),
                     m(new TreeLink()),
-                    m(new TreeMainNode()),
+                    m(new TreeMainNode(vnode.attrs['id'],vnode.attrs['page'])),
                     m(new TreeLink()),
-                    m(new TreeSubNode(SUB.CHILD,['tsuji','ayano'])),
+                    m(new TreeSubNode(SUB.CHILD,nodeData[vnode.attrs['id']]['next'])),
                     m(new TreeLink())
             ];
         };
@@ -350,9 +336,151 @@ class TreeApplication {
     constructor() {
         window.onload = function(){
             let root = document.body;
-            m.mount(root, new TreeRoot());
+            //m.mount(root, new TreeRoot());
+            m.route(root,'tree/3/0',{
+                'tree/:id/:page':new TreeRoot(),
+                'test':new TreeLink()
+            });
         };
     }
 }
 
 new TreeApplication();
+
+
+//仮のデータ構造
+let nodeData:Array<Object> = [];  //nextは実装しなくてよい？ (他NodeのPrevを検索すればよい)
+let nodePages:Array<Array<Object>> = []; //これは実際にはかなり違うデータ構造
+
+nodeData[1] = {
+    id: 1,
+    title: 'Javascriptの基本',
+    prev: [],
+    next: [3],
+};
+
+nodeData[2] = {
+    id: 2,
+    title: 'Virtual DOM',
+    prev: [],
+    next: [3],
+};
+
+nodeData[3] = {
+    id: 3,
+    title: 'Mithril.js',
+    prev: [1,2],
+    next: [4],
+};
+
+nodeData[4] = {
+    id: 4,
+    title: 'Polythene',
+    prev: [3],
+    next: [],
+};
+
+//nodeData1の持つページ群
+nodePages[1] = [
+    {
+        title:'npm',
+        contents:[
+            'この文章はテスト用の例文です。',
+            {
+                id:'aceedit',
+                type:COMPONENT.HIGHLIGHT,
+                data:{
+                    laungage: 'html',
+                    source: '<!doctype html>\n' +
+                            '<body>\n' +
+                            '   <script src="node.js"></script>\n' +
+                            '       <script>\n' +
+                            '       var root = document.body\n' +
+                            '       </script>\n' +
+                            '</body>'
+                }
+            },
+            'この文章は末尾の文章です。',
+        ]
+    }
+];
+
+//nodeData2の持つページ群
+nodePages[2] = [
+    {
+        title:'仮想のDOM',
+        contents:[
+            'Virtual DOMは',
+            {
+                id:'aceedit',
+                type:COMPONENT.HIGHLIGHT,
+                data:{
+                    laungage: 'html',
+                    source: '<!doctype html>\n' +
+                            '<body>\n' +
+                            '       すこぶる' +
+                            '</body>'
+                }
+            },
+            'すごいです。',
+        ]
+    }
+];
+
+//nodeData3の持つページ群
+nodePages[3] = [
+    {
+        title:'Mithril.jsとは？',
+        contents:[
+            'Mithril.jsは、VirtualDOMの技術を利用した、クライアントサイドのJavascriptフレームワークです。' +
+            'SPAをはじめとしたWebアプリケーションの作成を強力にサポートします。' +
+            'Mithrilはその他のVirtual DOMフレームワークと比較して、APIの数が少なく動作が高速という点が勝っています。' +
+            '余計な機能がないのでファイルサイズも軽量で、他の様々なライブラリやコンポーネントとの統合も容易です。',
+            {
+                id:'aceedit',
+                type:COMPONENT.HIGHLIGHT,
+                data:{
+                    laungage: 'html',
+                    source: '<!doctype html>\n' +
+                            '<body>\n' +
+                            '   <script src="//unpkg.com/mithril/mithril.js"></script>\n' +
+                            '       <script>\n' +
+                            '       var root = document.body\n' +
+                            '       // your code goes here!\n' +
+                            '       </script>\n' +
+                            '</body>'
+                }
+            },
+            'この文章は、コンポーネントのあいだに配置されています。',
+            {
+                id:'playground',
+                type:COMPONENT.PLAYGROUND,
+                data:{
+                    htmlsource: '<h1>Hello World!</h1>',
+                    csssource:  'h1 {\n' +
+                                '   color: #f00;\n' +
+                                '}',
+                    jssource:   'console.log("Hello World");'
+                }
+            },
+        ]
+    },
+    {
+        title:'他VirtualDomライブラリとの差異',
+        contents:[
+            'テスト',
+            'てすと'
+        ]
+    }
+];
+
+//nodeData4の持つページ群
+nodePages[4] = [
+    {
+        title:'Test.js',
+        contents:[
+            'テスト',
+            'てすと'
+        ]
+    }
+];
