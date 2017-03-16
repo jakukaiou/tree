@@ -1,10 +1,12 @@
 //TODO 1ノートのデータ渡し実装とルーティング実装
 /// <reference path="../../node_modules/@types/lodash/index.d.ts" />
+/// <reference path="../../node_modules/@types/marked/index.d.ts"/>
 
 import '../scss/main.scss';
 import 'font-awesome-webpack-2';
 import * as m from 'mithril';
 import * as _ from 'lodash';
+import * as marked from 'marked';
 
 // my modules
 import TreeComponent from './components/component';
@@ -215,12 +217,12 @@ class TreeComponentVnode extends ComponentBasic {
 class TreeMainNodeContent extends ComponentBasic {
     private contentArray:Array<any>;
 
-    constructor(contentArray:Array<any>) {
+    constructor(contentArray:Array<any>,pageTitle:string) {
         super();
 
         let makeContentVnode = (content:any)=> {
             if(typeof(content) === 'string') {
-                return m('p',content);
+                return m('div',m.trust(marked(content)));
             }else if(typeof(content) === 'object') {
                 return m(new TreeComponentVnode(content));
             }
@@ -230,7 +232,7 @@ class TreeMainNodeContent extends ComponentBasic {
 
         this.view = (vnode)=> {
             return [m('div.content.tree-content',[
-                        m(new TreeMainNodeContentTitle('Mithril.jsとは？')),
+                        m(new TreeMainNodeContentTitle(pageTitle)),
                         [ _.map(this.contentArray,makeContentVnode)]
                     ])];
         };
@@ -242,19 +244,12 @@ class TreeMainNodeContentTitle extends ComponentBasic {
         super();
 
         this.view = (vnode)=> {
-            return [m('div.columns',[
-                        m('div.column',[
-                            m('div.tree-content-title',[
-                                m('div.tree-message','この部分に入るコンテンツは未定'),
-                                m('h2.tree-content-title-main',[
-                                    m('div.tree-title-string',pageTitle)
-                                ])
-                            ])
-                        ]),
-                        m('div.column',[
-                            m('div.tree-content-ad.google-ad-rectangle','広告が入ります')
-                        ])
-                    ])];
+            return [    
+                        m('div.google-ad-rectangle'),
+                        m('h1.tree-content-title-main',[
+                            m('div.tree-title-string',pageTitle)
+                        ]
+                    )];
         };
     }
 }
@@ -271,7 +266,7 @@ class TreeMainNode extends ComponentBasic {
             return [m('div.section.tree-node.main',[
                         m('div.tree-contents',[
                             m(new TreeMainNodeHeader(nodeData[nodeID]['title'],nodePageTitles,nodePage)),
-                            m(new TreeMainNodeContent(nodePages[nodeID][nodePage]['contents']))
+                            m(new TreeMainNodeContent(nodePages[nodeID][nodePage]['contents'],nodePages[nodeID][nodePage]['title']))
                         ]),
             ])];
         };
