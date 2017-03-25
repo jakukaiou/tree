@@ -1,20 +1,17 @@
-var webpack = require('webpack');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var path = require('path');
+var CleanWebpackPlugin = require('clean-webpack-plugin');
 
-var publicPath = 'http://localhost:3000/';
-var hotMiddlewareScript = 'webpack-hot-middleware/client?reload=true';
-
-var devConfig = {
+var productionConfig = [{
     entry: {
-        content: ['./client/content', hotMiddlewareScript],
-        page2: ['./client/page2', hotMiddlewareScript]
+        content: './client/content',
+        page2: './client/page2'
     },
     output: {
         filename: './[name]/bundle.js',
         path: path.resolve(__dirname, './public'),
-        publicPath: publicPath
+        publicPath: '/'
     },
-    devtool: 'eval-source-map',
     resolve: {
         extensions: ['.jpg','.ts', '.webpack.js', '.web.js', '.js']
     },
@@ -36,9 +33,12 @@ var devConfig = {
         }]
     },
     plugins: [
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.NoEmitOnErrorsPlugin()
+        new CleanWebpackPlugin(['public']),
+        new ExtractTextPlugin({
+            filename: './[name]/index.css',
+            allChunks: true
+        })
     ]
-};
+}];
 
-module.exports = devConfig;
+module.exports = productionConfig;

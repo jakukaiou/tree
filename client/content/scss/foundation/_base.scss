@@ -1,0 +1,18 @@
+@import '../../../node_modules/bulma/bulma.sass';
+
+body {
+    background-color: #c8f0f8;
+    //background-image: linear-gradient(80deg, #e4f0c2, #fbffe2 90%);
+}
+
+.fa {
+    vertical-align: middle;
+    padding: 0 3px;
+}
+
+.google-ad-rectangle {
+    background-color: #969696;
+    width: 728px;
+    height: 90px;
+    margin-right: auto;
+}
