@@ -24,6 +24,7 @@ enum SUB {
 
 //コンポーネントの種類を表す列挙
 enum COMPONENT {
+    MARKDOWN,
     HIGHLIGHT,
     PLAYGROUND
 }
@@ -140,8 +141,13 @@ class TreeMainNodeModal extends ComponentBasic {
 
 class TreeMainNodeHeader extends ComponentBasic {
 
+    private prevNum:number;
+    private nextNum:number;
+
     constructor(nodeTitle:string,nodeID:number,pageTitles:Array<string>,pageNumber:number) {
         super();
+        this.prevNum = pageNumber-1;
+        this.nextNum = pageNumber+1;
 
         this.oncreate = (vnode)=> {
             //メインヘッダーのスクロール追従
@@ -176,10 +182,15 @@ class TreeMainNodeHeader extends ComponentBasic {
                             ]),
                             m('span.tree-content-header_title', [nodeTitle,m('small', pageTitles[pageNumber])]),
                             m('div.tree-content-header_pager', [
-                                m('a.tree-content-header_prev[id="open"]', [
+                                this.prevNum === -1 ?
+                                m('a.tree-content-header_prev.is-disable[id="open"]', [
                                     m('i.fa.fa-angle-left[aria-hidden="true]')
-                                ]),
-                                m('a.tree-content-header_next[id="open]', [
+                                ]) :
+                                m('a.tree-content-header_prev[id="open"]',{href:'#!tree/'+nodeID+'/'+this.prevNum}, [
+                                    m('i.fa.fa-angle-left[aria-hidden="true]')
+                                ])
+                                ,
+                                m('a.tree-content-header_next[id="open]',{href:'#!tree/'+nodeID+'/'+this.nextNum}, [
                                     m('i.fa.fa-angle-right[aria-hidden="true]')
                                 ])
                             ])
@@ -194,16 +205,19 @@ class TreeMainNodeHeader extends ComponentBasic {
 class TreeComponentVnode extends ComponentBasic {
 
     // TODO:色々なコンポーネントに対応させる
-    constructor(data:Object) {
+    constructor(data:Object,key:number) {
         super();
         this.oncreate = (vnode)=> {
             switch(data['type']) {
+                case COMPONENT.MARKDOWN: {
+                    break;
+                }
                 case COMPONENT.HIGHLIGHT: {
-                    let highlight = new Highlight('#'+data['id'],data['data']);
+                    let highlight = new Highlight('#component-'+key,data['data']);
                     break;
                 }
                 case COMPONENT.PLAYGROUND: {
-                    let playground = new PlayGround('#'+data['id'],data['data']);
+                    let playground = new PlayGround('#component-'+key,data['data']);
                     break;
                 }
             }
@@ -211,11 +225,14 @@ class TreeComponentVnode extends ComponentBasic {
 
         this.view = (vnode)=> {
             switch(data['type']) {
+                case COMPONENT.MARKDOWN: {
+                    return [m('div',m.trust(marked(data['data'])))];
+                }
                 case COMPONENT.HIGHLIGHT: {
-                    return [m('div.tree-ace-module.highlight[id="' + data['id'] + '"]')];
+                    return [m('div.tree-ace-module.highlight[id=component-' + key + ']')];
                 }
                 case COMPONENT.PLAYGROUND: {
-                    return [m('div.tree-ace-module.playground[id="' + data['id'] + '"]')];
+                    return [m('div.tree-ace-module.playground[id=component-' + key + ']')];
                 }
             }
         };
@@ -228,12 +245,8 @@ class TreeMainNodeContent extends ComponentBasic {
     constructor(contentArray:Array<any>,pageTitle:string) {
         super();
 
-        let makeContentVnode = (content:any)=> {
-            if(typeof(content) === 'string') {
-                return m('div',m.trust(marked(content)));
-            }else if(typeof(content) === 'object') {
-                return m(new TreeComponentVnode(content));
-            }
+        let makeContentVnode = (content:any,key:number)=> {
+            return m(new TreeComponentVnode(content,key));
         };
 
         this.contentArray = contentArray;
@@ -276,7 +289,7 @@ class TreeMainNode extends ComponentBasic {
                             m(new TreeMainNodeHeader(nodeData[nodeID]['title'],nodeID,nodePageTitles,nodePage)),
                             m(new TreeMainNodeContent(nodePages[nodeID][nodePage]['contents'],nodePages[nodeID][nodePage]['title']))
                         ]),
-            ])];
+                    ])];
         };
     }
 }
@@ -314,23 +327,117 @@ class TreeSubNode extends ComponentBasic {
     }
 }
 
+class TreeMainContent extends ComponentBasic {
+    private bookID:number;
+    private count = 0;
+
+    constructor(bookID:number,page:number){
+        super();
+
+        this.oninit = (vnode)=> {
+            this.bookID = vnode.attrs['id'];
+        }
+
+        this.view = (vnode)=> {
+            return [
+                m(new TreeSubNode(SUB.PARENT,nodeData[bookID]['prev'])),
+                m(new TreeLink()),
+                m(new TreeMainNode(bookID,page)),
+                m(new TreeLink()),
+                m(new TreeSubNode(SUB.CHILD,nodeData[bookID]['next'])),
+            ];
+        }
+    }
+}
+
 class TreeRoot extends ComponentBasic {
+    private bookID:number;
+
     constructor() {
         super();
 
-        this.view = (vnode)=> {
-            console.log(vnode.attrs);
+        this.oninit = (vnode)=> {
+            this.bookID = vnode.attrs['id'];
+        }
 
-            return [m(new TreeHeader()),
-                    m(new TreeLink()),
-                    m(new TreeSubNode(SUB.PARENT,nodeData[vnode.attrs['id']]['prev'])),
-                    m(new TreeLink()),
-                    m(new TreeMainNode(vnode.attrs['id'],vnode.attrs['page'])),
-                    m(new TreeLink()),
-                    m(new TreeSubNode(SUB.CHILD,nodeData[vnode.attrs['id']]['next'])),
-                    m(new TreeLink())
-            ];
+        this.view = (vnode)=> {
+            return [
+                m(new TreeHeader()),
+                m(new TreeLink()),
+                m(new TreeMainContent(vnode.attrs['id'],+vnode.attrs['page'])),
+                m(new TreeLink()),
+            ]
         };
+    }
+}
+
+class BookData {
+    public loadBool:Boolean = false;
+
+    private bookID:number = null;
+    private pageID:number = null;
+    public title:String = null;
+    public prev:Array<Object> = [];
+    public next:Array<Object> = [];
+    public pageContents:Array<Object> = [];
+
+    public fetch = (bookID:number,pageID:number)=> {
+
+        //ブックデータの取得
+        if(this.bookID === bookID && this.pageID === pageID){
+            console.log('same book');
+        }else if(this.bookID === bookID && this.pageID !== pageID){
+            this.loadBool = false;
+            Promise.all([
+                this.getPageData(bookID,pageID)
+            ]).then(function(){
+                console.log("loaded page");
+                console.log(this);
+                this.loadBool = true;
+            }.bind(this))
+        }else{
+            this.loadBool = false;
+            Promise.all([
+                this.getBookData(bookID),
+                this.getPageData(bookID,pageID)
+            ]).then(function(){
+                console.log("loaded page and book");
+                console.log(this);
+                this.loadBool = true;
+            }.bind(this))
+        }
+    };
+
+    private getBookData = (bookID:number)=>{
+
+        return m.request({
+                method: "GET",
+                url: "/api/book",
+                data: {bookID:bookID},
+            })
+            .then(function(result) {
+                console.log('BookData get!');
+                this.bookID = bookID;
+                this.title = result[0].title;
+                this.prev  = result[0].prev;
+                this.next  = result[0].next;
+            }
+            .bind(this));
+    }
+
+    private getPageData = (bookID:number,pageID:number)=>{
+
+        return m.request({
+                method: "GET",
+                url: "/api/page",
+                data: {bookID:bookID,pageID:pageID},
+            })
+            .then(function(result) {
+                console.log('PageData get!');
+                this.pageID = pageID;
+                this.pageContents = result;
+            }
+            .bind(this));
     }
 }
 
@@ -340,14 +447,28 @@ class TreeApplication {
         window.onload = function(){
             let root = document.body;
             //m.mount(root, new TreeRoot());
+            /*
             m.route(root,'tree/3/0',{
                 'tree/:id/:page':new TreeRoot(),
+                'test':new TreeLink()
+            });
+            */
+            m.route(root,'tree/3/0',{
+                'tree/:id/:page':{
+                    onmatch:
+                    (args: any, requestedPath: string) => {
+                        //console.log('onmatch');
+                        bookData.fetch(args['id'],args['page']);
+                        return new TreeRoot()
+                    }
+                },
                 'test':new TreeLink()
             });
         };
     }
 }
 
+let bookData = new BookData();
 new TreeApplication();
 
 
@@ -388,9 +509,11 @@ nodePages[1] = [
     {
         title:'npm',
         contents:[
-            'この文章はテスト用の例文です。',
             {
-                id:'aceedit',
+                type:COMPONENT.MARKDOWN,
+                data:'この文章はテスト用の例文です。'
+            },
+            {
                 type:COMPONENT.HIGHLIGHT,
                 data:{
                     laungage: 'html',
@@ -403,7 +526,10 @@ nodePages[1] = [
                             '</body>'
                 }
             },
-            'この文章は末尾の文章です。',
+            {
+                type:COMPONENT.MARKDOWN,
+                data:'この文章は末尾の文章です。'
+            },
         ]
     }
 ];
@@ -415,7 +541,6 @@ nodePages[2] = [
         contents:[
             'Virtual DOMは',
             {
-                id:'aceedit',
                 type:COMPONENT.HIGHLIGHT,
                 data:{
                     laungage: 'html',
@@ -425,7 +550,10 @@ nodePages[2] = [
                             '</body>'
                 }
             },
-            'すごいです。',
+            {
+                type:COMPONENT.MARKDOWN,
+                data:'すごいです。'
+            },
         ]
     }
 ];
@@ -435,12 +563,14 @@ nodePages[3] = [
     {
         title:'Mithril.jsとは？',
         contents:[
-            'Mithril.jsは、VirtualDOMの技術を利用した、クライアントサイドのJavascriptフレームワークです。' +
-            'SPAをはじめとしたWebアプリケーションの作成を強力にサポートします。' +
-            'Mithrilはその他のVirtual DOMフレームワークと比較して、APIの数が少なく動作が高速という点が勝っています。' +
-            '余計な機能がないのでファイルサイズも軽量で、他の様々なライブラリやコンポーネントとの統合も容易です。',
             {
-                id:'aceedit',
+                type:COMPONENT.MARKDOWN,
+                data:'Mithril.jsは、VirtualDOMの技術を利用した、クライアントサイドのJavascriptフレームワークです。' +
+                'SPAをはじめとしたWebアプリケーションの作成を強力にサポートします。' +
+                'Mithrilはその他のVirtual DOMフレームワークと比較して、APIの数が少なく動作が高速という点が勝っています。' +
+                '余計な機能がないのでファイルサイズも軽量で、他の様々なライブラリやコンポーネントとの統合も容易です。'
+            },
+            {
                 type:COMPONENT.HIGHLIGHT,
                 data:{
                     laungage: 'html',
@@ -454,26 +584,37 @@ nodePages[3] = [
                             '</body>'
                 }
             },
-            'この文章は、コンポーネントのあいだに配置されています。',
             {
-                id:'playground',
+                type:COMPONENT.MARKDOWN,
+                data:'この文章は、コンポーネントのあいだに配置されています。'
+            },
+            {
                 type:COMPONENT.PLAYGROUND,
                 data:{
                     htmlsource: '<h1>Hello World!</h1>',
                     csssource:  'h1 {\n' +
                                 '   color: #f00;\n' +
                                 '}',
-                    jssource:   'console.log("Hello World");'
+                    jssource:   'document.querySelector("h1").style.backgroundColor = "#ffff00"'
                 }
             },
-            '$$$a^2_1+b^2_1=5$$$'
+            {
+                type:COMPONENT.MARKDOWN,
+                data:'$$$a^2_1+b^2_1=5$$$'
+            }
         ]
     },
     {
         title:'他VirtualDomライブラリとの差異',
         contents:[
-            'テスト',
-            'てすと'
+            {
+                type:COMPONENT.MARKDOWN,
+                data:'テスト'
+            },
+            {
+                type:COMPONENT.MARKDOWN,
+                data:'てすと'
+            }
         ]
     }
 ];
@@ -483,8 +624,14 @@ nodePages[4] = [
     {
         title:'Test.js',
         contents:[
-            'テスト',
-            'てすと'
+            {
+                type:COMPONENT.MARKDOWN,
+                data:'テスト'
+            },
+            {
+                type:COMPONENT.MARKDOWN,
+                data:'てすと'
+            }
         ]
     }
 ];

@@ -47,6 +47,17 @@ $defaultLineColor: #464446;
     position: relative;
     height: 40px;
     color: #868486;
+    width: 35px;
+}
+
+.tree-content-header_prev.is-disable {
+    cursor: default;
+    color: #d6d4d6;
+}
+
+.tree-content-header_prev.is-disable:hover {
+    cursor: default;
+    color: #d6d4d6;
 }
 
 .tree-content-header_next {

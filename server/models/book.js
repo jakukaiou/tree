@@ -2,25 +2,11 @@ var mongoose     = require('mongoose');
 var Schema       = mongoose.Schema;
 
 var BookSchema = new Schema({
+    bookID:Number,
     title:String,
-    prev:[Number],
-    next:[Number],
-    pages:[
-        {
-            title:String,
-            contents:[
-                {
-                    type:Number,
-                    contents:[
-                        {
-                            type:Number,
-                            data:Schema.Types.Mixed
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
+    prev:[{bookID:Number,title:String}],
+    next:[{bookID:Number,title:String}],
+    pageCount:Number,
 });
 
-module.exports = mongoose.model('Book', BookSchema);
+module.exports = mongoose.model('Book', BookSchema,'book');

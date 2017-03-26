@@ -13,9 +13,7 @@ var router = express.Router();
 
 // DBへの接続
 var mongoose   = require('mongoose');
-mongoose.connect('mongodb://192.168.100.20:27017/jsonAPI');
-// モデルの宣言
-var User       = require('./server/models/user');
+mongoose.connect('mongodb://localhost:27017/treeAPI');
 
 app.engine('html', consolidate.ejs);
 app.set('view engine', 'html');

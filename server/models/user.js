@@ -7,4 +7,5 @@ var UserSchema   = new Schema({
     age: Number
 });
 
-module.exports = mongoose.model('User', UserSchema);
+//3つめの引数はコレクション名
+module.exports = mongoose.model('User', UserSchema, 'user');
