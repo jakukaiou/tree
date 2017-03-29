@@ -1,0 +1,81 @@
+.tree-cms_main {
+    border: solid 1px;
+    height: 600px;
+}
+
+.tree-cms_treeview {
+    border-right: solid 1px;
+    overflow: scroll;
+}
+
+.tree-cms_treeview .tree-cms_book .tree-cms_bookName {
+    font-size: 120%;
+}
+
+.tree-cms_treeview .tree-cms_book .tree-cms_bookName:hover {
+    background-color: #caffdd;
+}
+
+.tree-cms_treeview .tree-cms_book .tree-cms_bookName.is-active {
+    background-color: #caffdd;
+}
+
+.tree-cms_treeview .tree-cms_book .tree-cms_pageMenu{
+    display: none;
+}
+
+.tree-cms_treeview .tree-cms_book .tree-cms_pageMenu.is-active {
+    display: block;
+}
+
+.tree-cms_treeview .tree-cms_book .tree-cms_page {
+    padding-left: 20px;
+}
+
+.tree-cms_treeview .tree-cms_book .tree-cms_page:hover {
+    background-color: #caffdd;
+}
+
+.tree-cms_treeview .tree-cms_book .tree-cms_page.is-active {
+    background-color: #caffdd;
+}
+
+.tree-cms_treeview .tree-cms_book .tree-cms_page i {
+    font-size: 12px;
+    padding-right: 5px;
+}
+
+.tree-cms_treeview .tree-cms_book .tree-cms_pagePlus {
+    padding-left: 20px;
+    color: #df3a2d;
+}
+
+.tree-cms_treeview .tree-cms_book .tree-cms_pagePlus i {
+    font-size: 12px;
+}
+
+.tree-cms_treeview .tree-cms_book i {
+    padding-right: 5px;
+}
+
+.tree-cms_treeview .tree-cms_book {
+    border-bottom: groove 1px rgba(0, 0, 0, 0.1);
+}
+
+.tree-cms_treeview ol {
+    margin-left: 2em;
+}
+
+.tree-cms_treeview .tree-cms_bookPlus {
+    color: #df3a2d;
+    font-size: 120%;
+}
+
+.tree-cms_treeview .tree-cms_bookPlus i {
+    padding-right: 5px;
+}
+
+.tree-cms_editmenu {
+    overflow: scroll;
+    background-color: #898989
+}

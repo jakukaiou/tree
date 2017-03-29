@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>content management system</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" media="screen" title="no title">
+    <script src="/cms/bundle.js"></script>
+</head>
+<body>
+
+<nav class="nav tree-nav">
+    <div class="nav-left">
+        <a class="nav-item tree-title">
+            <div class="tree-nav logo"></div>Tree.io CMS
+        </a>
+    </div>
+    <div class="nav-right nav-menu">
+        <div class="nav-item">
+            <a class="button is-light">Save</a>
+        </div>
+    </div>
+    </nav>
+
+<div class="columns is-gapless tree-cms_main">
+    <div class="column is-one-quarter tree-cms_treeview">
+        <div class="tree-cms_book">
+            <div class="tree-cms_bookName"><i class="fa fa-book" aria-hidden="true"></i>book1</div>
+            <div class="tree-cms_pageMenu">
+                <div class="tree-cms_pages">
+                    <div class="tree-cms_page"><i class="fa fa-file fa-fw" aria-hidden="true"></i>page1</div>
+                    <div class="tree-cms_page"><i class="fa fa-file fa-fw" aria-hidden="true"></i>page2</div>
+                    <div class="tree-cms_page"><i class="fa fa-file fa-fw" aria-hidden="true"></i>page3</div>
+                    <div class="tree-cms_page"><i class="fa fa-file fa-fw" aria-hidden="true"></i>page4</div>
+                    <div class="tree-cms_page"><i class="fa fa-file fa-fw" aria-hidden="true"></i>page5</div>
+                </div>
+                <a class="tree-cms_pagePlus"><i class="fa fa-plus" aria-hidden="true"></i></a>
+            </div>
+        </div>
+        <div class="tree-cms_book">
+            <div class="tree-cms_bookName"><i class="fa fa-book" aria-hidden="true"></i>book2</div>
+            <div class="tree-cms_pageMenu is-active">
+                <div class="tree-cms_pages">
+                    <div class="tree-cms_page"><i class="fa fa-file" aria-hidden="true"></i>page1</div>
+                    <div class="tree-cms_page"><i class="fa fa-file" aria-hidden="true"></i>page2</div>
+                    <div class="tree-cms_page"><i class="fa fa-file" aria-hidden="true"></i>page3</div>
+                    <div class="tree-cms_page"><i class="fa fa-file" aria-hidden="true"></i>page4</div>
+                    <div class="tree-cms_page"><i class="fa fa-file" aria-hidden="true"></i>page5</div>
+                </div>
+                <div class="tree-cms_pagePlus"><i class="fa fa-plus" aria-hidden="true"></i><i class="fa fa-file" aria-hidden="true"></i></div>
+            </div>
+        </div>
+        <div class="tree-cms_bookPlus"><i class="fa fa-plus" aria-hidden="true"></i><i class="fa fa-book" aria-hidden="true"></i></div>
+    </div>
+    <div class="column is-three-quarter tree-cms_editmenu">
+        Edit Menu
+    </div>
+</div>
+</body>
+</html>

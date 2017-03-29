@@ -6,15 +6,15 @@
 /// <reference path="../../../node_modules/@types/lodash/index.d.ts"/>
 /// <reference path="../../../node_modules/@types/mithril/index.d.ts"/>
 
-import '../scss/main.scss';
+import '../scss/index.scss';
 import * as m from 'mithril';
 import * as _ from 'lodash';
 import * as marked from 'marked';
 
 // my modules
-import TreeComponent from './components/component';
-import PlayGround from './components/playground';
-import Highlight from './components/ace-highlight';
+import TreeComponent from '../../common/components/component';
+import PlayGround from '../../common/components/playground';
+import Highlight from '../../common/components/ace-highlight';
 
 // 親ノードと子ノードを表す列挙
 enum SUB {
@@ -50,7 +50,7 @@ class TreeHeader extends ComponentBasic {
 
         this.oncreate = (vnode)=> {
             //スクロールのリセット処理
-            window.scrollTo(0,0);
+            //window.scrollTo(0,0);
         }
 
         this.view = (vnode)=> {
@@ -157,7 +157,9 @@ class TreeMainNodeHeader extends ComponentBasic {
                 if (window.pageYOffset > scrollPos) {
                     document.getElementById('tree-content-header').classList.add('is-fixed');
                 }else {
-                    document.getElementById('tree-content-header').classList.remove('is-fixed');
+                    if(document.getElementById('tree-content-header')){
+                        document.getElementById('tree-content-header').classList.remove('is-fixed');
+                    }
                 }
             }, false);
 
@@ -364,7 +366,7 @@ class TreeRoot extends ComponentBasic {
             return [
                 m(new TreeHeader()),
                 m(new TreeLink()),
-                m(new TreeMainContent(vnode.attrs['id'],+vnode.attrs['page'])),
+                bookData.loadBool? m(new TreeMainContent(vnode.attrs['id'],+vnode.attrs['page'])):m('div','loading...'),
                 m(new TreeLink()),
             ]
         };
@@ -379,12 +381,14 @@ class BookData {
     public title:String = null;
     public prev:Array<Object> = [];
     public next:Array<Object> = [];
-    public pageContents:Array<Object> = [];
+    public pageContent:Array<Object> = [];
+    public pageCount:number = null;
 
     public fetch = (bookID:number,pageID:number)=> {
 
         //ブックデータの取得
         if(this.bookID === bookID && this.pageID === pageID){
+            this.loadBool = true;
             console.log('same book');
         }else if(this.bookID === bookID && this.pageID !== pageID){
             this.loadBool = false;
@@ -421,6 +425,7 @@ class BookData {
                 this.title = result[0].title;
                 this.prev  = result[0].prev;
                 this.next  = result[0].next;
+                this.pageCount = result[0].pageCount;
             }
             .bind(this));
     }
@@ -446,13 +451,6 @@ class TreeApplication {
     constructor() {
         window.onload = function(){
             let root = document.body;
-            //m.mount(root, new TreeRoot());
-            /*
-            m.route(root,'tree/3/0',{
-                'tree/:id/:page':new TreeRoot(),
-                'test':new TreeLink()
-            });
-            */
             m.route(root,'tree/3/0',{
                 'tree/:id/:page':{
                     onmatch:
