@@ -1,0 +1,14 @@
+.tree-cms_editmenu {
+    overflow: scroll;
+    background-color: #898989
+}
+
+.tree-cms_editmenu .tree-mainEditArea {
+    border-right: solid 1px;
+}
+
+.tree-contentEdit .tree-editor textarea {
+    width: 100%;
+    border: solid 1px #ffd077;
+    resize: none;
+}

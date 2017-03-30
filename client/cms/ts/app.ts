@@ -1,6 +1,8 @@
+import TAAutoSize from '../../common/utilities/autosize';
+
 class TreeCMSManager {
     constructor(){
-        
+        new TAAutoSize('#ta');
     }
 }
 

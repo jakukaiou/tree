@@ -54,12 +54,20 @@
     font-size: 12px;
 }
 
+.tree-cms_treeview .tree-cms_book .tree-cms_pagePlus:hover {
+    background-color: #caddff;
+}
+
 .tree-cms_treeview .tree-cms_book i {
     padding-right: 5px;
 }
 
+.tree-cms_treeview .tree-cms_book input {
+    display: inline-block;
+}
+
 .tree-cms_treeview .tree-cms_book {
-    border-bottom: groove 1px rgba(0, 0, 0, 0.1);
+    border-bottom: groove 1px rgba(0, 0, 0, 0.2);
 }
 
 .tree-cms_treeview ol {
@@ -75,7 +83,6 @@
     padding-right: 5px;
 }
 
-.tree-cms_editmenu {
-    overflow: scroll;
-    background-color: #898989
+.tree-cms_treeview .tree-cms_bookPlus:hover {
+    background-color: #caddff;
 }
