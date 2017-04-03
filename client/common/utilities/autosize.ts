@@ -3,7 +3,7 @@ export default class TAAutoSize {
     protected elSelector:string;
 
     constructor(elementSelector:string){
-        
+
         if(elementSelector) {
             this.element = <HTMLElement>document.querySelector(elementSelector);
             if(this.element == null) {
@@ -16,7 +16,7 @@ export default class TAAutoSize {
         }
 
         this.element.style.lineHeight = "20px";//init
-        this.element.style.height = "20px";//init
+        this.element.style.height = "40px";//init
 
         this.element.addEventListener("input",function(evt){
             if(this.scrollHeight > this.offsetHeight){   

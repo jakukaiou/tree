@@ -1,5 +1,7 @@
 import TreeComponent from './component';
 
+import '../scss/ace.scss'
+
 import * as ace from 'brace';
 
 import 'brace/mode/html';

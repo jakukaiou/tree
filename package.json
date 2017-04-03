@@ -19,7 +19,6 @@
     "express": "^4.14.0",
     "lodash": "^4.17.4",
     "marked": "^0.3.6",
-    "mathjax": "^2.7.0",
     "mithril": "^1.0.1",
     "mongoose": "^4.9.1"
   },

@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <title>content management system</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" media="screen" title="no title">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [['$$$','$$$']],
+            displayMath: [['$$$$','$$$$']]
+            }
+    });
+    </script>
     <script src="/cms/bundle.js"></script>
 </head>
 <body>
@@ -47,7 +56,7 @@
                     <div class="tree-cms_page"><i class="fa fa-file" aria-hidden="true"></i><label>page2</label></div>
                     <div class="tree-cms_page"><i class="fa fa-file" aria-hidden="true"></i>page3</div>
                     <div class="tree-cms_page"><i class="fa fa-file" aria-hidden="true"></i>page4</div>
-                    <div class="tree-cms_page"><i class="fa fa-file" aria-hidden="true"></i>page5</div>
+                    <div class="tree-cms_page"><i class="fa fa-file" aria-hidden="true"></i>$$$a^2_1+b^2_1=5$$$</div>
                 </div>
                 <div class="tree-cms_pagePlus"><i class="fa fa-plus" aria-hidden="true"></i><i class="fa fa-file" aria-hidden="true"></i></div>
             </div>
@@ -56,14 +65,15 @@
     </div>
     <div class="column columns is-gapless is-three-quarter tree-cms_editmenu">
         <div class="column tree-mainEditArea">
-            <div class="tree-contentEdit">
-                <div class="tree-editor">
-                    <textarea id="ta">aaa</textarea>
-                </div>
+            <div class="tree-editor">
+                <textarea id="ta">aaa</textarea>
+            </div>
+            <div class="tree-editor">
+                <textarea id="ta2">aaa</textarea>
             </div>
         </div>
-        <div class="column tree-subEditArea">
-
+        <div class="column tree-previewArea">
+            <div id="component-1" class="tree-module playground"></div>
         </div>
     </div>
 </div>

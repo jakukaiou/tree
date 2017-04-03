@@ -1,6 +1,8 @@
 //TODO: UPDATE用の関数を作成する
 import TreeComponent from './component';
 
+import '../scss/playground.scss'
+
 import * as ace from 'brace';
 import 'brace/mode/html';
 import 'brace/mode/css';
@@ -43,7 +45,7 @@ export default class PlayGround extends TreeComponent {
     constructor(elementSelector:string,argObj:Object) {
         super(elementSelector,argObj);
 
-        this.htmlSource = argObj.hasOwnProperty('htmlsource')? argObj['htmlsource']:true;
+        this.htmlSource = argObj.hasOwnProperty('htmlsource')? argObj['htmlsource']:'';
         this.cssSource = argObj.hasOwnProperty('csssource')? argObj['csssource']:'';
         this.jsSource = argObj.hasOwnProperty('jssource')? argObj['jssource']:'';
 

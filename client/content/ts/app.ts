@@ -9,12 +9,11 @@
 import '../scss/index.scss';
 import * as m from 'mithril';
 import * as _ from 'lodash';
-import * as marked from 'marked';
 
 // my modules
-import TreeComponent from '../../common/components/component';
-import PlayGround from '../../common/components/playground';
-import Highlight from '../../common/components/ace-highlight';
+import Markdown from '../../common/components/ts/markdown';
+import PlayGround from '../../common/components/ts/playground';
+import Highlight from '../../common/components/ts/ace-highlight';
 
 // 親ノードと子ノードを表す列挙
 enum SUB {
@@ -212,6 +211,7 @@ class TreeComponentVnode extends ComponentBasic {
         this.oncreate = (vnode)=> {
             switch(data['type']) {
                 case COMPONENT.MARKDOWN: {
+                    let markdown = new Markdown('#component-'+key,data['data']);
                     break;
                 }
                 case COMPONENT.HIGHLIGHT: {
@@ -228,13 +228,13 @@ class TreeComponentVnode extends ComponentBasic {
         this.view = (vnode)=> {
             switch(data['type']) {
                 case COMPONENT.MARKDOWN: {
-                    return [m('div',m.trust(marked(data['data'])))];
+                    return [m('div.tree-module.markdown[id=component-' + key + ']')];
                 }
                 case COMPONENT.HIGHLIGHT: {
-                    return [m('div.tree-ace-module.highlight[id=component-' + key + ']')];
+                    return [m('div.tree-module.highlight[id=component-' + key + ']')];
                 }
                 case COMPONENT.PLAYGROUND: {
-                    return [m('div.tree-ace-module.playground[id=component-' + key + ']')];
+                    return [m('div.tree-module.playground[id=component-' + key + ']')];
                 }
             }
         };
@@ -509,7 +509,9 @@ nodePages[1] = [
         contents:[
             {
                 type:COMPONENT.MARKDOWN,
-                data:'この文章はテスト用の例文です。'
+                data:{
+                    source: 'この文章はテスト用の例文です。'
+                }
             },
             {
                 type:COMPONENT.HIGHLIGHT,
@@ -537,7 +539,12 @@ nodePages[2] = [
     {
         title:'仮想のDOM',
         contents:[
-            'Virtual DOMは',
+            {
+                type:COMPONENT.MARKDOWN,
+                data:{
+                    source: 'VirtualDOMは'
+                }
+            },
             {
                 type:COMPONENT.HIGHLIGHT,
                 data:{
@@ -550,7 +557,9 @@ nodePages[2] = [
             },
             {
                 type:COMPONENT.MARKDOWN,
-                data:'すごいです。'
+                data:{
+                    source: 'すごいです。'
+                }
             },
         ]
     }
@@ -563,10 +572,12 @@ nodePages[3] = [
         contents:[
             {
                 type:COMPONENT.MARKDOWN,
-                data:'Mithril.jsは、VirtualDOMの技術を利用した、クライアントサイドのJavascriptフレームワークです。' +
-                'SPAをはじめとしたWebアプリケーションの作成を強力にサポートします。' +
-                'Mithrilはその他のVirtual DOMフレームワークと比較して、APIの数が少なく動作が高速という点が勝っています。' +
-                '余計な機能がないのでファイルサイズも軽量で、他の様々なライブラリやコンポーネントとの統合も容易です。'
+                data:{
+                    source: 'Mithril.jsは、VirtualDOMの技術を利用した、クライアントサイドのJavascriptフレームワークです。' +
+                            'SPAをはじめとしたWebアプリケーションの作成を強力にサポートします。' +
+                            'Mithrilはその他のVirtual DOMフレームワークと比較して、APIの数が少なく動作が高速という点が勝っています。' +
+                            '\n> 余計な機能がないのでファイルサイズも軽量で、他の様々なライブラリやコンポーネントとの統合も容易です。'
+                }
             },
             {
                 type:COMPONENT.HIGHLIGHT,
@@ -584,7 +595,9 @@ nodePages[3] = [
             },
             {
                 type:COMPONENT.MARKDOWN,
-                data:'この文章は、コンポーネントのあいだに配置されています。'
+                data:{
+                    source: 'この文章は、コンポーネントの間に配置されています。'
+                }
             },
             {
                 type:COMPONENT.PLAYGROUND,
@@ -598,7 +611,9 @@ nodePages[3] = [
             },
             {
                 type:COMPONENT.MARKDOWN,
-                data:'$$$a^2_1+b^2_1=5$$$'
+                data:{
+                    source: '$$$a^2_1+b^2_1=5$$$'
+                }
             }
         ]
     },
@@ -607,11 +622,15 @@ nodePages[3] = [
         contents:[
             {
                 type:COMPONENT.MARKDOWN,
-                data:'テスト'
+                data:{
+                    source: 'テスト'
+                }
             },
             {
                 type:COMPONENT.MARKDOWN,
-                data:'てすと'
+                data:{
+                    source: 'てすと'
+                }
             }
         ]
     }
