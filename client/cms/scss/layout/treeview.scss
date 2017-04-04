@@ -1,11 +1,30 @@
+
 .tree-cms_main {
-    border: solid 1px;
-    height: 600px;
+    height: 100%;
+}
+
+.tree-cms_treeMenu {
+    display: flex;
+    border-right: groove 1px rgba(0, 0, 0, 0.5);
+    overflow-x: hidden;
+    overflow-y: scroll;
+    position: absolute;
+    left: 0;
+    z-index: 10;
+    height: 100%;
+    background-color: #ffffff;
+    transition: left 0.2s;
+}
+
+.tree-cms_resizer {
+    background-color: #eeeeee;
+    cursor: pointer;
+    width: 16px;
 }
 
 .tree-cms_treeview {
-    border-right: solid 1px;
-    overflow: scroll;
+    width: 180px;
+    flex: 1;
 }
 
 .tree-cms_treeview .tree-cms_book .tree-cms_bookName {
@@ -60,6 +79,7 @@
 
 .tree-cms_treeview .tree-cms_book i {
     padding-right: 5px;
+    display: inline;
 }
 
 .tree-cms_treeview .tree-cms_book input {
@@ -68,10 +88,6 @@
 
 .tree-cms_treeview .tree-cms_book {
     border-bottom: groove 1px rgba(0, 0, 0, 0.2);
-}
-
-.tree-cms_treeview ol {
-    margin-left: 2em;
 }
 
 .tree-cms_treeview .tree-cms_bookPlus {

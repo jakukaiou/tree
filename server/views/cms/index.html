@@ -30,50 +30,79 @@
     </div>
     </nav>
 
-<div class="columns is-gapless tree-cms_main">
-    <div class="column is-one-quarter tree-cms_treeview">
-        <div class="tree-cms_book">
-            <div class="tree-cms_bookName is-horizontal">
-                <i class="fa fa-book" aria-hidden="true"></i>
-                <input value="book1">
-            </div>
-            <div class="tree-cms_pageMenu">
-                <div class="tree-cms_pages">
-                    <div class="tree-cms_page"><i class="fa fa-file fa-fw" aria-hidden="true"></i><p>page1</p></div>
-                    <div class="tree-cms_page"><i class="fa fa-file fa-fw" aria-hidden="true"></i>page2</div>
-                    <div class="tree-cms_page"><i class="fa fa-file fa-fw" aria-hidden="true"></i>page3</div>
-                    <div class="tree-cms_page"><i class="fa fa-file fa-fw" aria-hidden="true"></i>page4</div>
-                    <div class="tree-cms_page"><i class="fa fa-file fa-fw" aria-hidden="true"></i>page5</div>
+<div class="is-gapless tree-cms_main">
+    <div class="tree-cms_treeMenu">
+        <div class="is-one-quarter tree-cms_treeview">
+            <div class="tree-cms_book">
+                <div class="tree-cms_bookName is-horizontal">
+                    <i class="fa fa-book" aria-hidden="true"></i>
+                    <input value="book1">
                 </div>
-                <a class="tree-cms_pagePlus"><i class="fa fa-plus" aria-hidden="true"></i></a>
-            </div>
-        </div>
-        <div class="tree-cms_book">
-            <div class="tree-cms_bookName"><i class="fa fa-book" aria-hidden="true"></i>book2</div>
-            <div class="tree-cms_pageMenu is-active">
-                <div class="tree-cms_pages">
-                    <div class="tree-cms_page"><i class="fa fa-file" aria-hidden="true"></i><input value="page1"></div>
-                    <div class="tree-cms_page"><i class="fa fa-file" aria-hidden="true"></i><label>page2</label></div>
-                    <div class="tree-cms_page"><i class="fa fa-file" aria-hidden="true"></i>page3</div>
-                    <div class="tree-cms_page"><i class="fa fa-file" aria-hidden="true"></i>page4</div>
-                    <div class="tree-cms_page"><i class="fa fa-file" aria-hidden="true"></i>$$$a^2_1+b^2_1=5$$$</div>
+                <div class="tree-cms_pageMenu">
+                    <div class="tree-cms_pages">
+                        <div class="tree-cms_page"><i class="fa fa-file fa-fw" aria-hidden="true"></i><p>page1</p></div>
+                        <div class="tree-cms_page"><i class="fa fa-file fa-fw" aria-hidden="true"></i>page2</div>
+                        <div class="tree-cms_page"><i class="fa fa-file fa-fw" aria-hidden="true"></i>page3</div>
+                        <div class="tree-cms_page"><i class="fa fa-file fa-fw" aria-hidden="true"></i>page4</div>
+                        <div class="tree-cms_page"><i class="fa fa-file fa-fw" aria-hidden="true"></i>page5</div>
+                    </div>
+                    <a class="tree-cms_pagePlus"><i class="fa fa-plus" aria-hidden="true"></i></a>
                 </div>
-                <div class="tree-cms_pagePlus"><i class="fa fa-plus" aria-hidden="true"></i><i class="fa fa-file" aria-hidden="true"></i></div>
             </div>
+            <div class="tree-cms_book">
+                <div class="tree-cms_bookName"><i class="fa fa-book" aria-hidden="true"></i>book2</div>
+                <div class="tree-cms_pageMenu is-active">
+                    <div class="tree-cms_pages">
+                        <div class="tree-cms_page"><i class="fa fa-file" aria-hidden="true"></i><input value="page1"></div>
+                        <div class="tree-cms_page"><i class="fa fa-file" aria-hidden="true"></i><label>page2</label></div>
+                        <div class="tree-cms_page"><i class="fa fa-file" aria-hidden="true"></i>page3</div>
+                        <div class="tree-cms_page"><i class="fa fa-file" aria-hidden="true"></i>page4</div>
+                        <div class="tree-cms_page"><i class="fa fa-file" aria-hidden="true"></i>page5</div>
+                    </div>
+                    <div class="tree-cms_pagePlus"><i class="fa fa-plus" aria-hidden="true"></i><i class="fa fa-file" aria-hidden="true"></i></div>
+                </div>
+            </div>
+            <div class="tree-cms_bookPlus"><i class="fa fa-plus" aria-hidden="true"></i><i class="fa fa-book" aria-hidden="true"></i></div>
         </div>
-        <div class="tree-cms_bookPlus"><i class="fa fa-plus" aria-hidden="true"></i><i class="fa fa-book" aria-hidden="true"></i></div>
+        <div class="tree-cms_resizer">
+            
+        </div>
     </div>
-    <div class="column columns is-gapless is-three-quarter tree-cms_editmenu">
-        <div class="column tree-mainEditArea">
-            <div class="tree-editor">
-                <textarea id="ta">aaa</textarea>
+    <div class="is-gapless is-three-quarter tree-cms_editmenu">
+        <div class="tree-cms_resizeArea">
+            
+        </div>
+        <div class="tree-mainEditArea">
+            <div class="tree-editors">
+                <!--ここにエディタを追加していく-->
+                <!--
+                <div class="tree-editor">
+                    <textarea id="ta">aaa</textarea>
+                </div>
+                <div class="tree-editor">
+                    <textarea id="ta2">aaa</textarea>
+                </div>
+                -->
             </div>
-            <div class="tree-editor">
-                <textarea id="ta2">aaa</textarea>
+            <div class="addEditor">
+                <i class="fa fa-plus" aria-hidden="true"></i> add Editor
+            </div>
+            <div class="selectEditor">
+                <div class="editorComponent markdown">
+                    markdown
+                </div>
+                <div class="editorComponent ace-highlight">
+                    code-highlight
+                </div>
+                <div class="editorComponent playground">
+                    playground
+                </div>
             </div>
         </div>
-        <div class="column tree-previewArea">
+        <div class="tree-previewArea">
+            <!--
             <div id="component-1" class="tree-module playground"></div>
+            -->
         </div>
     </div>
 </div>
