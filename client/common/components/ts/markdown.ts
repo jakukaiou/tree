@@ -12,7 +12,12 @@ export default class Markdown extends TreeComponent {
         super(elementSelector,argObj);
 
         this.source = argObj.hasOwnProperty('source')? argObj['source']:'';
-        document.querySelector(elementSelector).innerHTML = marked(this.source);
-        window['MathJax'].Hub.Queue(['Typeset',window['MathJax'].Hub, document.querySelector(elementSelector)]);
+        this.render(this.source);
+    }
+
+    public render(source:string){
+        this.source = source;
+        this.element.innerHTML = marked(this.source);
+        window['MathJax'].Hub.Queue(['Typeset',window['MathJax'].Hub, this.element]);
     }
 }

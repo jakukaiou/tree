@@ -7,6 +7,8 @@
 /// <reference path="../../../node_modules/@types/mithril/index.d.ts"/>
 
 import '../scss/index.scss';
+import 'github-markdown-css';
+
 import * as m from 'mithril';
 import * as _ from 'lodash';
 
@@ -254,7 +256,7 @@ class TreeMainNodeContent extends ComponentBasic {
         this.contentArray = contentArray;
 
         this.view = (vnode)=> {
-            return [m('div.content.tree-content',[
+            return [m('div.markdown-body.tree-content',[
                         m(new TreeMainNodeContentTitle(pageTitle)),
                         [ _.map(this.contentArray,makeContentVnode)]
                     ])];

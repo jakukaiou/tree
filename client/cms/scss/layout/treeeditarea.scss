@@ -30,13 +30,6 @@ body {
     overflow-y: scroll;
 }
 
-.tree-mainEditArea .tree-editor textarea {
-    display: block;
-    width: 100%;
-    border: solid 1px #ffd077;
-    resize: none;
-}
-
 .tree-mainEditArea .addEditor {
     color: #df3a2d;
     cursor: pointer;
@@ -46,7 +39,7 @@ body {
     height: 120px;
     background-color: #ffffff;
     overflow-x: scroll;
-    display: flex;
+    display: none;
     border: solid 3px #56caef;
 }
 
@@ -54,17 +47,21 @@ body {
     min-width: 160px;
     height: 100%;
     flex: 1;
-
+    border: groove 1px #ffffff;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: #222222;
+    text-align: center;
+    cursor:pointer;
 }
 
-.selectEditor .editorComponent.markdown {
-    background-color: #df3a2d;
+.selectEditor .editorComponent .editorCategory {
+    width: 100%;
+    margin-bottom: 20px;
+    font-weight: bold;
+    border-bottom: groove 1px #ffffff;
 }
 
-.selectEditor .editorComponent.ace-highlight {
-    background-color: #ffd077;
-}
-
-.selectEditor .editorComponent.playground {
-    background-color: #3aaf2d;
+.selectEditor .editorComponent i {
+    font-size: 48px;
 }

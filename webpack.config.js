@@ -33,6 +33,13 @@ var devConfig = {
         }, {
             test: /\.ts$/,
             use: 'awesome-typescript-loader'
+        }, {
+            test: /\.css$/,
+            use: [
+                'style-loader',
+                'css-loader?sourceMap',
+                'resolve-url-loader'
+            ]
         }]
     },
     plugins: [

@@ -1,13 +1,9 @@
-export default class TAAutoSize {
-    protected element:HTMLElement;
+export default class Util {
+    static TAexpand(element:HTMLElement,size:number){
+        element.style.lineHeight = size.toString() + "px";//init
+        element.style.height = size.toString() + "px";
 
-    constructor(element:HTMLElement){
-
-        this.element = element;
-        this.element.style.lineHeight = "20px";//init
-        this.element.style.height = "40px";//init
-
-        this.element.addEventListener("input",function(evt){
+        element.addEventListener("input",function(evt){
             if(this.scrollHeight > this.offsetHeight){   
                 this.style.height = this.scrollHeight + "px";
             }else{
