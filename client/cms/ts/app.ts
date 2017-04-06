@@ -60,22 +60,6 @@ class TreeCMSEditor {
         this.addEditorButton.addEventListener('click',()=>{
             this.addEditorButton.style.display = 'none';
             this.addEditorMenu.style.display = 'flex';
-            /*
-            let addEditor:Element = document.createElement('div');     //追加するエディター
-            let addComponent:Element = document.createElement('div');  //追加するコンポーネント
-
-            let editorIDstring:string = 'component-editor'+this.nextEditorID.toString();
-            addEditor.id = editorIDstring;
-            this.editorArea.appendChild(addEditor);
-
-            let componentIDString:string = 'component-preview'+this.nextEditorID.toString();
-            addComponent.id = componentIDString;
-            this.previewArea.appendChild(addComponent);
-
-            this.editors[this.nextEditorID] = new MarkdownEditor('#'+editorIDstring, '#'+componentIDString);
-
-            this.nextEditorID++;
-            */
         });
 
         this.addMarkdown = <HTMLElement>document.querySelector('.selectEditor .markdown');
