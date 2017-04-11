@@ -1,0 +1,39 @@
+.tree-editor .editorHead {
+    background-color: #222222;
+    color: #ffffff;
+    width: 100%;
+    height: 20px;
+    font-size: 12px;
+    margin: 0;
+    display: flex;
+    border-top: solid 1px #7777dd;
+    border-bottom: solid 1px #7777dd;
+}
+
+.tree-editor .editorTitle {
+    padding-left: 10px;
+}
+
+.tree-editor .delete {
+    margin-left: auto;
+}
+
+.tree-editor.markdownEditor textarea {
+    display: block;
+    width: 100%;
+    border: solid 1px #ffd077;
+    resize: none;
+}
+
+.tree-module.aceEdit {
+    width: 500px;
+    height: 400px;
+}
+
+.tree-editor.highlightEditor select {
+    margin-left: 10px;
+    font-size: 12px;
+    width: 120px;
+    background-color: #333333;
+    color: #ffffff;
+}

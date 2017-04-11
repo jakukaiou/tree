@@ -1,0 +1,15 @@
+//メインコンテンツに適用するscssファイル
+//cmsのプレビュー画面でも使用する
+.tree-content {
+    padding: 2rem;
+}
+
+.tree-content.markdown-body p {
+    white-space: pre-line;   
+    word-wrap : break-word;
+    overflow-wrap : break-word;
+}
+
+.tree-content.markdown-body ul {
+    list-style-type: disc;
+}

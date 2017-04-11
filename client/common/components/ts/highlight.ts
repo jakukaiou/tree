@@ -14,6 +14,8 @@ import 'brace/mode/typescript';
 import 'brace/mode/dockerfile';
 import 'brace/mode/c_cpp';
 import 'brace/mode/csharp';
+import 'brace/mode/json';
+import 'brace/mode/sql';
 
 import 'brace/theme/monokai';
 
@@ -23,6 +25,8 @@ import 'brace/theme/monokai';
 //  source   : highlight target source                      # ''
 
 export default class Highlight extends TreeComponent {
+    public editor:ace.Editor;
+
     private laungage:string;
     private source:string;
 
@@ -32,11 +36,16 @@ export default class Highlight extends TreeComponent {
         this.laungage = argObj.hasOwnProperty('laungage')? argObj['laungage']:'html';
         this.source = argObj.hasOwnProperty('source')? argObj['source']:'';
 
-        let editor = ace.edit(<HTMLElement>document.querySelector(elementSelector));
-        editor.$blockScrolling = Infinity;
-        editor.setTheme('ace/theme/monokai');
-        editor.getSession().setMode('ace/mode/'+ this.laungage);
-        editor.setValue(this.source, -1);
-        editor.setReadOnly(true);
+        this.editor = ace.edit(<HTMLElement>document.querySelector(elementSelector));
+        this.editor.$blockScrolling = Infinity;
+        this.editor.setTheme('ace/theme/monokai');
+        this.editor.getSession().setMode('ace/mode/'+ this.laungage);
+        this.editor.setValue(this.source, -1);
+        this.editor.setReadOnly(true);
+    }
+
+    public setLanguage = (language:string)=>{
+        this.laungage = language
+        this.editor.getSession().setMode('ace/mode/'+ this.laungage);
     }
 }

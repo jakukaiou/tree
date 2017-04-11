@@ -1,3 +1,5 @@
+//TODO:highlight.jsの導入を検討？
+//githubのtasklistなどを追加する
 //github-markdownで <kbd>shift</kbd> + <kbd>command</kbd> + <kbd>3</kbd> でkey表示できる
 
 import 'github-markdown-css';
@@ -9,18 +11,22 @@ import Util from '../../common/utilities/util';
 
 import Editor from '../../common/editors/ts/editor';
 import MarkdownEditor from '../../common/editors/ts/markdownEditor';
+import HighlightEditor from '../../common/editors/ts/highlightEditor';
+import PlayGroundEditor from '../../common/editors/ts/playgroundEditor';
 
 import Component from '../../common/components/ts/component';
 import Markdown from '../../common/components/ts/markdown';
 
 import PlayGround from '../../common/components/ts/playground';
-import Highlight from '../../common/components/ts/ace-highlight';
+import Highlight from '../../common/components/ts/highlight';
 
 //リアルタイムエディターの部分
 class TreeCMSEditor {
     private addEditorButton:HTMLElement;
     private addEditorMenu:HTMLElement;
+
     private addMarkdown:HTMLElement;
+    private addHighlight:HTMLElement;
 
     private editorArea:HTMLElement;
     private previewArea:HTMLElement;
@@ -62,25 +68,54 @@ class TreeCMSEditor {
             this.addEditorMenu.style.display = 'flex';
         });
 
+        //マークダウンエディタの追加処理
         this.addMarkdown = <HTMLElement>document.querySelector('.selectEditor .markdown');
         this.addMarkdown.addEventListener('click',()=>{
-            this.addEditorButton.style.display = 'block';
-            this.addEditorMenu.style.display = 'none';
-            let addEditor:Element = document.createElement('div');     //追加するエディター
-            let addComponent:Element = document.createElement('div');  //追加するコンポーネント
-
-            let editorIDstring:string = 'component-editor'+this.nextEditorID.toString();
-            addEditor.id = editorIDstring;
-            this.editorArea.appendChild(addEditor);
-
-            let componentIDString:string = 'component-preview'+this.nextEditorID.toString();
-            addComponent.id = componentIDString;
-            this.previewArea.appendChild(addComponent);
-
-            this.editors[this.nextEditorID] = new MarkdownEditor('#'+editorIDstring, '#'+componentIDString);
-
-            this.nextEditorID++;
+            console.log('make markdown Editor');
+            this.addEditor(Util.COMPONENT.MARKDOWN);
         });
+
+        //ハイライトエディタの追加処理
+        this.addHighlight = <HTMLElement>document.querySelector('.selectEditor .highlighter');
+        this.addHighlight.addEventListener('click',()=>{
+            console.log('make highlight Editor');
+            this.addEditor(Util.COMPONENT.HIGHLIGHT);
+        });
+
+        this.addHighlight = <HTMLElement>document.querySelector('.selectEditor .playground');
+        this.addHighlight.addEventListener('click',()=>{
+            console.log('make playground Editor');
+            this.addEditor(Util.COMPONENT.PLAYGROUND);
+        });
+    }
+
+    private addEditor= (type)=>{
+        this.addEditorButton.style.display = 'block';
+        this.addEditorMenu.style.display = 'none';
+        let addEditor:Element = document.createElement('div');     //追加するエディター
+        let addComponent:Element = document.createElement('div');  //追加するコンポーネント
+
+        let editorIDstring:string = 'component-editor'+this.nextEditorID.toString();
+        addEditor.id = editorIDstring;
+        this.editorArea.appendChild(addEditor);
+
+        let componentIDString:string = 'component-preview'+this.nextEditorID.toString();
+        addComponent.id = componentIDString;
+        this.previewArea.appendChild(addComponent);
+
+        switch(type){
+            case Util.COMPONENT.MARKDOWN:
+                this.editors[this.nextEditorID] = new MarkdownEditor('#'+editorIDstring, '#'+componentIDString);
+                break;
+            case Util.COMPONENT.HIGHLIGHT:
+                this.editors[this.nextEditorID] = new HighlightEditor('#'+editorIDstring, '#'+componentIDString);
+                break;
+            case Util.COMPONENT.PLAYGROUND:
+                this.editors[this.nextEditorID] = new PlayGroundEditor('#'+editorIDstring, '#'+componentIDString);
+                break;
+        }
+
+        this.nextEditorID++;
     }
 }
 

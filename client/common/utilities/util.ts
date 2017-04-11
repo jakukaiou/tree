@@ -1,5 +1,27 @@
+export enum COMPONENT {
+    MARKDOWN,
+    HIGHLIGHT,
+    PLAYGROUND
+}
+
+export enum LANGUAGE {
+    HTML,
+    CSS,
+    JAVASCRIPT,
+    PHP,
+    PYTHON,
+    GOLANG,
+    TYPESCRIPT,
+    DOCKERFILE,
+    CPP,
+    CSHARP
+}
+
 export default class Util {
-    static TAexpand(element:HTMLElement,size:number){
+    public static COMPONENT = COMPONENT;
+    public static LANGUAGE = LANGUAGE;
+
+    public static TAexpand(element:HTMLElement,size:number){
         element.style.lineHeight = size.toString() + "px";//init
         element.style.height = size.toString() + "px";
 

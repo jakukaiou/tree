@@ -15,7 +15,7 @@ import * as _ from 'lodash';
 // my modules
 import Markdown from '../../common/components/ts/markdown';
 import PlayGround from '../../common/components/ts/playground';
-import Highlight from '../../common/components/ts/ace-highlight';
+import Highlight from '../../common/components/ts/highlight';
 
 // 親ノードと子ノードを表す列挙
 enum SUB {
@@ -233,7 +233,7 @@ class TreeComponentVnode extends ComponentBasic {
                     return [m('div.tree-module.markdown[id=component-' + key + ']')];
                 }
                 case COMPONENT.HIGHLIGHT: {
-                    return [m('div.tree-module.highlight[id=component-' + key + ']')];
+                    return [m('div.tree-module.highlighter[id=component-' + key + ']')];
                 }
                 case COMPONENT.PLAYGROUND: {
                     return [m('div.tree-module.playground[id=component-' + key + ']')];
@@ -578,7 +578,9 @@ nodePages[3] = [
                     source: 'Mithril.jsは、VirtualDOMの技術を利用した、クライアントサイドのJavascriptフレームワークです。' +
                             'SPAをはじめとしたWebアプリケーションの作成を強力にサポートします。' +
                             'Mithrilはその他のVirtual DOMフレームワークと比較して、APIの数が少なく動作が高速という点が勝っています。' +
-                            '\n> 余計な機能がないのでファイルサイズも軽量で、他の様々なライブラリやコンポーネントとの統合も容易です。'
+                            '\n> 余計な機能がないのでファイルサイズも軽量で、他の様々なライブラリやコンポーネントとの統合も容易です。' +
+                            '\n> 素晴らしいですね。' +
+                            '\n\nUndoは<kbd>Command</kbd> + <kbd>Z</kbd>'
                 }
             },
             {
