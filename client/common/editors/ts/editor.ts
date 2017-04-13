@@ -60,6 +60,7 @@ export default class Editor {
         this.editorDelete.classList.add('delete');
 
         this.editorBody = document.createElement('div');
+        this.editorBody.style.width = '100%';
     }
 
 

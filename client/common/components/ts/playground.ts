@@ -164,6 +164,14 @@ export default class PlayGround extends TreeComponent {
         this.jseditor.setTheme('ace/theme/monokai');
     }
 
+    public update(html:string,css:string,js:string):void {
+        this.htmleditor.setValue(html);
+        this.csseditor.setValue(css);
+        this.jseditor.setValue(js);
+        
+        this.render();
+    }
+
     private render():void {
         let source:string = this.createSource();
         let result = (<HTMLIFrameElement>document.querySelector(this.elSelector + ' #result')).contentDocument;
