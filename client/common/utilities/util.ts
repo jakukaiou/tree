@@ -1,26 +1,4 @@
-export enum COMPONENT {
-    MARKDOWN,
-    HIGHLIGHT,
-    PLAYGROUND
-}
-
-export enum LANGUAGE {
-    HTML,
-    CSS,
-    JAVASCRIPT,
-    PHP,
-    PYTHON,
-    GOLANG,
-    TYPESCRIPT,
-    DOCKERFILE,
-    CPP,
-    CSHARP
-}
-
 export default class Util {
-    public static COMPONENT = COMPONENT;
-    public static LANGUAGE = LANGUAGE;
-
     public static TAexpand(element:HTMLElement,size:number){
         element.style.lineHeight = size.toString() + "px";//init
         element.style.height = size.toString() + "px";
@@ -41,5 +19,14 @@ export default class Util {
                 }
             }
         });
+    }
+
+    //FontAwesomeのアイコンを返す
+    public static createIcon = (iconClass)=>{
+        let element = document.createElement('i');
+        element.classList.add('fa');
+        element.classList.add(iconClass);
+        element.setAttribute('aria-hidden','true');
+        return element;
     }
 }

@@ -27,6 +27,8 @@ enum TAB {
 
 export default class PlayGround extends TreeComponent {
 
+    private static TAB = TAB;
+
     private htmlSource:string;
     private cssSource:string;
     private jsSource:string;

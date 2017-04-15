@@ -19,12 +19,26 @@ import 'brace/mode/sql';
 
 import 'brace/theme/monokai';
 
+enum LANGUAGE {
+    HTML,
+    CSS,
+    JAVASCRIPT,
+    PHP,
+    PYTHON,
+    GOLANG,
+    TYPESCRIPT,
+    DOCKERFILE,
+    CPP,
+    CSHARP
+}
+
 /****    COMPONENT DESCRIPTION     ****/
 //  [require args] (after # is default value)
 //  laungage : laungage you want to syntax-highlighting.    # 'html'
 //  source   : highlight target source                      # ''
-
 export default class Highlight extends TreeComponent {
+    public static LANGUAGE = LANGUAGE;
+
     public editor:ace.Editor;
 
     private laungage:string;

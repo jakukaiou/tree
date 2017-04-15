@@ -11,6 +11,7 @@ import 'github-markdown-css';
 
 import * as m from 'mithril';
 import * as _ from 'lodash';
+import TreeD from '../../common/define/treeD';
 
 // my modules
 import Markdown from '../../common/components/ts/markdown';
@@ -21,13 +22,6 @@ import Highlight from '../../common/components/ts/highlight';
 enum SUB {
     PARENT,
     CHILD
-}
-
-//コンポーネントの種類を表す列挙
-enum COMPONENT {
-    MARKDOWN,
-    HIGHLIGHT,
-    PLAYGROUND
 }
 
 class ComponentBasic implements Mithril.Component<{},{}> {
@@ -212,15 +206,15 @@ class TreeComponentVnode extends ComponentBasic {
         super();
         this.oncreate = (vnode)=> {
             switch(data['type']) {
-                case COMPONENT.MARKDOWN: {
+                case TreeD.COMPONENT.MARKDOWN: {
                     let markdown = new Markdown('#component-'+key,data['data']);
                     break;
                 }
-                case COMPONENT.HIGHLIGHT: {
+                case TreeD.COMPONENT.HIGHLIGHT: {
                     let highlight = new Highlight('#component-'+key,data['data']);
                     break;
                 }
-                case COMPONENT.PLAYGROUND: {
+                case TreeD.COMPONENT.PLAYGROUND: {
                     let playground = new PlayGround('#component-'+key,data['data']);
                     break;
                 }
@@ -229,13 +223,13 @@ class TreeComponentVnode extends ComponentBasic {
 
         this.view = (vnode)=> {
             switch(data['type']) {
-                case COMPONENT.MARKDOWN: {
+                case TreeD.COMPONENT.MARKDOWN: {
                     return [m('div.tree-module.markdown[id=component-' + key + ']')];
                 }
-                case COMPONENT.HIGHLIGHT: {
+                case TreeD.COMPONENT.HIGHLIGHT: {
                     return [m('div.tree-module.highlighter[id=component-' + key + ']')];
                 }
-                case COMPONENT.PLAYGROUND: {
+                case TreeD.COMPONENT.PLAYGROUND: {
                     return [m('div.tree-module.playground[id=component-' + key + ']')];
                 }
             }
@@ -510,13 +504,13 @@ nodePages[1] = [
         title:'npm',
         contents:[
             {
-                type:COMPONENT.MARKDOWN,
+                type:TreeD.COMPONENT.MARKDOWN,
                 data:{
                     source: 'この文章はテスト用の例文です。'
                 }
             },
             {
-                type:COMPONENT.HIGHLIGHT,
+                type:TreeD.COMPONENT.HIGHLIGHT,
                 data:{
                     laungage: 'html',
                     source: '<!doctype html>\n' +
@@ -529,7 +523,7 @@ nodePages[1] = [
                 }
             },
             {
-                type:COMPONENT.MARKDOWN,
+                type:TreeD.COMPONENT.MARKDOWN,
                 data:'この文章は末尾の文章です。'
             },
         ]
@@ -542,13 +536,13 @@ nodePages[2] = [
         title:'仮想のDOM',
         contents:[
             {
-                type:COMPONENT.MARKDOWN,
+                type:TreeD.COMPONENT.MARKDOWN,
                 data:{
                     source: 'VirtualDOMは'
                 }
             },
             {
-                type:COMPONENT.HIGHLIGHT,
+                type:TreeD.COMPONENT.HIGHLIGHT,
                 data:{
                     laungage: 'html',
                     source: '<!doctype html>\n' +
@@ -558,7 +552,7 @@ nodePages[2] = [
                 }
             },
             {
-                type:COMPONENT.MARKDOWN,
+                type:TreeD.COMPONENT.MARKDOWN,
                 data:{
                     source: 'すごいです。'
                 }
@@ -573,7 +567,7 @@ nodePages[3] = [
         title:'Mithril.jsとは？',
         contents:[
             {
-                type:COMPONENT.MARKDOWN,
+                type:TreeD.COMPONENT.MARKDOWN,
                 data:{
                     source: 'Mithril.jsは、VirtualDOMの技術を利用した、クライアントサイドのJavascriptフレームワークです。' +
                             'SPAをはじめとしたWebアプリケーションの作成を強力にサポートします。' +
@@ -584,7 +578,7 @@ nodePages[3] = [
                 }
             },
             {
-                type:COMPONENT.HIGHLIGHT,
+                type:TreeD.COMPONENT.HIGHLIGHT,
                 data:{
                     laungage: 'html',
                     source: '<!doctype html>\n' +
@@ -598,13 +592,13 @@ nodePages[3] = [
                 }
             },
             {
-                type:COMPONENT.MARKDOWN,
+                type:TreeD.COMPONENT.MARKDOWN,
                 data:{
                     source: 'この文章は、コンポーネントの間に配置されています。'
                 }
             },
             {
-                type:COMPONENT.PLAYGROUND,
+                type:TreeD.COMPONENT.PLAYGROUND,
                 data:{
                     htmlsource: '<h1>Hello World!</h1>',
                     csssource:  'h1 {\n' +
@@ -614,7 +608,7 @@ nodePages[3] = [
                 }
             },
             {
-                type:COMPONENT.MARKDOWN,
+                type:TreeD.COMPONENT.MARKDOWN,
                 data:{
                     source: '$$$a^2_1+b^2_1=5$$$'
                 }
@@ -625,13 +619,13 @@ nodePages[3] = [
         title:'他VirtualDomライブラリとの差異',
         contents:[
             {
-                type:COMPONENT.MARKDOWN,
+                type:TreeD.COMPONENT.MARKDOWN,
                 data:{
                     source: 'テスト'
                 }
             },
             {
-                type:COMPONENT.MARKDOWN,
+                type:TreeD.COMPONENT.MARKDOWN,
                 data:{
                     source: 'てすと'
                 }
@@ -646,11 +640,11 @@ nodePages[4] = [
         title:'Test.js',
         contents:[
             {
-                type:COMPONENT.MARKDOWN,
+                type:TreeD.COMPONENT.MARKDOWN,
                 data:'テスト'
             },
             {
-                type:COMPONENT.MARKDOWN,
+                type:TreeD.COMPONENT.MARKDOWN,
                 data:'てすと'
             }
         ]
