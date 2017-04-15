@@ -128,7 +128,7 @@ class TreeCMSBookBar {
     private books:{[key:number]:TreeCMSBook};
     private nextBookID:number;
 
-    constructor(bookData:Array<Object>){
+    constructor(){
         this.bookList = <HTMLElement>document.querySelector('.tree-cms_books');
         this.bookAddButton = <HTMLElement>document.querySelector('.tree-cms_bookPlus');
         this.nextBookID = 1;
@@ -229,7 +229,6 @@ class TreeCMSBook {
             pageTitleInputElement.style.display = 'none';
 
             pageIconElement.addEventListener('click',()=>{
-                console.log('click pageTitle');
                 pageEditBool = !pageEditBool;
 
                 if(pageEditBool){
@@ -256,11 +255,54 @@ class TreeCMSBook {
     }
 }
 
-class TreeCMS {
+class TreeCMSBookInfo {
+    private element:HTMLElement;
+
     constructor(){
-        window.onload = function(){
-            new TreeCMSBookBar(bookData);
-            new TreeCMSEditor();
+        this.element = <HTMLElement>document.querySelector('.tree-cms_bookInfoArea');
+    }
+
+    public set active (bool:Boolean){
+        if(bool){
+            this.element.style.display = 'flex';
+        }else{
+            this.element.style.display = 'none';
+        }
+    }
+}
+
+class TreeCMSPageInfo {
+    private element:HTMLElement;
+
+    constructor(){
+        this.element = <HTMLElement>document.querySelector('.tree-cms_pageInfoArea');
+    }
+
+    public set active (bool:Boolean){
+        if(bool){
+            this.element.style.display = 'flex';
+        }else{
+            this.element.style.display = 'none';
+        }
+    }
+}
+
+class TreeCMS {
+    private bookbar:TreeCMSBookBar;
+
+    private editor:TreeCMSEditor;
+    private bookInfo:TreeCMSBookInfo;
+    private pageInfo:TreeCMSPageInfo;
+
+    constructor(){
+        window.onload = ()=>{
+            this.editor = new TreeCMSEditor();
+            this.bookInfo = new TreeCMSBookInfo();
+            this.pageInfo = new TreeCMSPageInfo();
+
+            this.bookbar = new TreeCMSBookBar();
+            this.bookInfo.active = false;
+            this.pageInfo.active = false;
         }
     }
 }
