@@ -23,6 +23,8 @@ import Highlight from '../../common/components/ts/highlight';
 
 //リアルタイムエディターの部分
 class TreeCMSEditor {
+    private element:HTMLElement;
+
     private addEditorButton:HTMLElement;
     private addEditorMenu:HTMLElement;
 
@@ -42,6 +44,8 @@ class TreeCMSEditor {
     private previews:{[key:number]:Component};
 
     constructor(){
+        this.element = <HTMLElement>document.querySelector('.tree-cms_editmenu');
+
         this.nextEditorID = 0;
         this.openBool = true;
         this.editors = {};
@@ -118,6 +122,14 @@ class TreeCMSEditor {
 
         this.nextEditorID++;
     }
+
+    public set active (bool:Boolean){
+        if(bool){
+            this.element.style.display = 'flex';
+        }else{
+            this.element.style.display = 'none';
+        }
+    }
 }
 
 //編集ブック選択メニューの部分
@@ -128,7 +140,15 @@ class TreeCMSBookBar {
     private books:{[key:number]:TreeCMSBook};
     private nextBookID:number;
 
-    constructor(){
+    private editor:TreeCMSEditor;
+    private bookInfo:TreeCMSBookInfo;
+
+    constructor(editor:TreeCMSEditor,bookInfo:TreeCMSBookInfo){
+        this.editor = editor;
+        this.bookInfo = bookInfo;
+
+        this.editor.active = false;
+
         this.bookList = <HTMLElement>document.querySelector('.tree-cms_books');
         this.bookAddButton = <HTMLElement>document.querySelector('.tree-cms_bookPlus');
         this.nextBookID = 1;
@@ -271,38 +291,18 @@ class TreeCMSBookInfo {
     }
 }
 
-class TreeCMSPageInfo {
-    private element:HTMLElement;
-
-    constructor(){
-        this.element = <HTMLElement>document.querySelector('.tree-cms_pageInfoArea');
-    }
-
-    public set active (bool:Boolean){
-        if(bool){
-            this.element.style.display = 'flex';
-        }else{
-            this.element.style.display = 'none';
-        }
-    }
-}
-
 class TreeCMS {
     private bookbar:TreeCMSBookBar;
 
     private editor:TreeCMSEditor;
     private bookInfo:TreeCMSBookInfo;
-    private pageInfo:TreeCMSPageInfo;
 
     constructor(){
         window.onload = ()=>{
             this.editor = new TreeCMSEditor();
             this.bookInfo = new TreeCMSBookInfo();
-            this.pageInfo = new TreeCMSPageInfo();
 
-            this.bookbar = new TreeCMSBookBar();
-            this.bookInfo.active = false;
-            this.pageInfo.active = false;
+            this.bookbar = new TreeCMSBookBar(this.editor,this.bookInfo);
         }
     }
 }
