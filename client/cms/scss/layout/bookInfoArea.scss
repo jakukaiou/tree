@@ -1,0 +1,38 @@
+.tree-cms_bookInfoArea {
+    display: flex;
+    height: 100%;
+    padding: 10px;
+}
+
+.tree-cms_bookInfoArea .tree-cms_resizeArea{
+    width: 196px;
+    height: 100%;
+}
+
+.tree-cms_bookLinkInput {
+    display: flex;
+    padding: 10px;
+}
+
+.tree-cms_bookLinkArea {
+    flex: 1;
+    width: 200px;
+    border: groove 1px;
+    background-color: #a9a9a9;
+}
+
+.tree-cms_LinkTitle {
+    color: #ffffff;
+    background-color: #222222;
+    font-size: 12px;
+}
+
+.tree-cms_BookList {
+    height: 250px;
+    width: 200px;
+}
+
+.tree-cms_linkedBook {
+    border-bottom: groove 1px;
+    background-color: #ffffff;
+}
