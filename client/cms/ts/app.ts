@@ -318,8 +318,6 @@ class TreeCMSBook {
         newPageElement.appendChild(pageTitleElement);
 
         newPageElement.addEventListener('dblclick',()=>{
-            console.log(this.pages);
-            console.log(pageID);
             this.bookEditor.open(this.pages[pageID]);
         });
 
