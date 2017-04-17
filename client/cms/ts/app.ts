@@ -34,10 +34,6 @@ class TreeCMSEditor {
     private editorArea:HTMLElement;
     private previewArea:HTMLElement;
 
-    private editorTreeview:HTMLElement;
-    private editorResizer:HTMLElement;
-
-    private openBool:Boolean;
     private nextEditorID:number;
 
     private editors:{[key:number]:Editor};
@@ -50,19 +46,7 @@ class TreeCMSEditor {
         this.element = <HTMLElement>document.querySelector('.tree-cms_editmenu');
 
         this.nextEditorID = 0;
-        this.openBool = true;
         this.editors = {};
-
-        this.editorTreeview = <HTMLElement>document.querySelector('.tree-cms_treeview');
-        this.editorResizer = <HTMLElement>document.querySelector('.tree-cms_resizer');
-        this.editorResizer.addEventListener('click',()=>{
-            this.openBool = !this.openBool;
-            if(this.openBool){
-                this.editorTreeview.style.width= '180px';
-            }else{
-                this.editorTreeview.style.width= '0px';
-            }
-        });
 
         this.editorArea = <HTMLElement>document.querySelector('.tree-editors');
         this.previewArea = <HTMLElement>document.querySelector('.tree-previewArea');
@@ -157,15 +141,32 @@ class TreeCMSBookBar {
 
     private editor:TreeCMSEditor;
     private bookInfo:TreeCMSBookInfo;
+    private toolbar:TreeCMSToolBar;
 
-    constructor(editor:TreeCMSEditor,bookInfo:TreeCMSBookInfo){
+    private editorTreeview:HTMLElement;
+    private editorResizer:HTMLElement;
+    private openBool:Boolean;
+
+    //ブックバーの各種操作が可能かどうか
+    //このクラス内ではこれで判断
+    private lockBool:Boolean;
+
+    //ブックバーをロックしたブック
+    private lockBookID:number;
+    private lockPageID:number;
+
+    constructor(editor:TreeCMSEditor,bookInfo:TreeCMSBookInfo,toolbar:TreeCMSToolBar){
         this.books = {};
 
         this.editor = editor;
         this.bookInfo = bookInfo;
+        this.toolbar = toolbar;
 
         this.bookInfo.active = false;
         this.editor.active = false;
+        this.lockBool = false;
+        this.lockBookID = 0;
+        this.lockPageID = 0;
 
         this.bookList = <HTMLElement>document.querySelector('.tree-cms_books');
         this.bookAddButton = <HTMLElement>document.querySelector('.tree-cms_bookPlus');
@@ -174,15 +175,82 @@ class TreeCMSBookBar {
         this.bookAddButton.addEventListener('click',()=>{
             this.bookAdd();
         });
+
+        this.editorTreeview = <HTMLElement>document.querySelector('.tree-cms_treeview');
+        this.openBool = true;
+        this.editorResizer = <HTMLElement>document.querySelector('.tree-cms_resizer');
+        this.editorResizer.addEventListener('click',()=>{
+            this.openBool = !this.openBool;
+            if(this.openBool){
+                this.sideOpen();
+            }else{
+                this.sideClose();
+            }
+        });
     }
 
     private bookAdd = ()=>{
-        let element = document.createElement('div');
-        element.classList.add('tree-cms_book');
-        element.id = 'book-'+this.nextBookID;
-        this.bookList.appendChild(element);
-        this.books[this.nextBookID] = new TreeCMSBook('#book-'+this.nextBookID,this.bookInfo,this.editor,[]);
-        this.nextBookID++;
+        if(!this.lockBool){
+            let element = document.createElement('div');
+            element.classList.add('tree-cms_book');
+            element.id = 'book-'+this.nextBookID;
+            this.bookList.appendChild(element);
+            this.books[this.nextBookID] = new TreeCMSBook(this.nextBookID,'#book-'+this.nextBookID,this,this.bookInfo,this.editor,this.toolbar,[]);
+            this.nextBookID++;
+        }
+    }
+
+    public sideOpen = ()=>{
+        if(!this.lockBool){
+            this.editorTreeview.style.width= '180px';
+        }
+    }
+
+    public sideClose = ()=>{
+        if(!this.lockBool){
+            this.editorTreeview.style.width= '0px';
+        }
+    }
+
+    //ブックバーをロックする
+    public lock = (bookID:number,pageID?:number)=>{
+        this.lockBookID = bookID;
+        if(pageID){
+            this.lockPageID = pageID;
+        }
+        this.lockBool = true;
+    }
+
+    //ブックバーをアンロックする
+    public unlock = ()=>{
+        this.lockBookID = 0;
+        this.lockPageID = 0;
+        this.lockBool = false;
+    }
+
+    //ブックバーが利用可能かどうか調べる
+    public available = (bookID:number,pageID?:number)=>{
+        if(this.lockBool){
+            if(bookID){
+                if(pageID){
+                    if(this.lockBookID == bookID && this.lockPageID == pageID){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }else{
+                    if(this.lockBookID == bookID){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
+            }else{
+                return true;
+            }
+        }else{
+            return true;
+        }
     }
 }
 
@@ -190,24 +258,42 @@ class TreeCMSBook {
     private element:HTMLElement;
     private pageElement:HTMLElement;
 
-    private pages:Array<Object>;
+    private bookID:number;
+
     private nextPageID:number;
 
     //ブックの情報を開く画面 ブック自体の情報を編集する時にアクティブにする
     private bookInfo:TreeCMSBookInfo;
     //ページのエディタ画面 ページ編集時にアクティブにする
     private bookEditor:TreeCMSEditor;
+    //ブックのツールバー
+    private bookToolbar:TreeCMSToolBar;
+    //bookBarクラス
+    private base:TreeCMSBookBar;
 
-    constructor(elementSelector:string,bookInfo:TreeCMSBookInfo,bookEditor:TreeCMSEditor,bookPages:Array<Object>){
+    //ブックのタイトルが入る
+    public title:string;
+
+    //ページの内容が入る
+    public pages:Array<Object>;
+
+    constructor(bookID:number,elementSelector:string,base:TreeCMSBookBar,bookInfo:TreeCMSBookInfo,bookEditor:TreeCMSEditor,bookToolbar:TreeCMSToolBar,bookPages:Array<Object>){
+        this.bookInfo = bookInfo;
+        this.bookEditor = bookEditor;
+        this.bookToolbar = bookToolbar;
+        this.base = base;
+
+        this.bookID = bookID;
+
+        this.pages = bookPages;
+        this.nextPageID = this.pages.length + 1;
+        console.log(this.nextPageID);
+
+        this.title = 'newBook';
+
         this.element = <HTMLElement>document.querySelector(elementSelector);
         this.element.appendChild(this.createBookTitle('newBook'));
         this.element.appendChild(this.createBookPagesArea());
-
-        this.bookInfo = bookInfo;
-        this.bookEditor = bookEditor;
-
-        this.pages = bookPages;
-        this.nextPageID = this.pages.length;
     }
 
     private createBookTitle = (bookName:string)=>{
@@ -217,11 +303,10 @@ class TreeCMSBook {
         let bookTitleElement:HTMLElement = document.createElement('label');
         let bookTitleDispElement:HTMLElement = document.createElement('label');
         let bookTitleInputElement:HTMLInputElement = document.createElement('input');
-        let bookEditBool:Boolean = false;
+        let bookEditBool:Boolean = true;
 
         bookTitleDispElement.innerHTML = bookName;
         bookTitleInputElement.value = bookName;
-        bookTitleInputElement.style.display = 'none';
 
         element.classList.add('tree-cms_bookName');
         element.appendChild(bookIconElement);
@@ -232,20 +317,25 @@ class TreeCMSBook {
             bookEditBool = !bookEditBool;
 
             if(bookEditBool){
+                this.base.lock(this.bookID);
                 bookTitleDispElement.style.display = 'none';
                 bookTitleInputElement.style.display = 'inline';
             }else{
+                this.base.unlock();
                 bookTitleDispElement.style.display = 'inline';
                 bookTitleInputElement.style.display = 'none';
+                this.title = bookTitleInputElement.value;
                 bookTitleDispElement.innerHTML = bookTitleInputElement.value;
             }
         });
 
         element.addEventListener('dblclick',()=>{
-            console.log('book Edit start');
-            this.bookInfo.open(this);
-            this.bookEditor.active = false;
-        })
+            this.bookOpen();
+        });
+
+        this.base.lock(this.bookID);
+        bookTitleDispElement.style.display = 'none';
+        bookTitleInputElement.style.display = 'inline';
 
         return element;
     }
@@ -263,9 +353,11 @@ class TreeCMSBook {
         addPageElement.appendChild(Util.createIcon('fa-file'));
 
         addPageElement.addEventListener('click',()=>{
-            let newPageElement = this.createBookPage(this.nextPageID);
-            this.nextPageID++;
-            pageElement.appendChild(newPageElement);
+            if(this.base.available(this.bookID,this.nextPageID)){
+                let newPageElement = this.createBookPage(this.nextPageID);
+                this.nextPageID++;
+                pageElement.appendChild(newPageElement);
+            }
         });
 
         element.appendChild(pageElement);
@@ -276,7 +368,10 @@ class TreeCMSBook {
 
     //新規ページ作成
     private createBookPage = (pageID:number)=>{
-        this.pages[pageID] = {};
+        this.pages[pageID] = {
+            title:'new page',
+            contents:[]
+        };
 
         let pageEditBool:Boolean = false;
 
@@ -293,21 +388,24 @@ class TreeCMSBook {
 
         pageTitleElement.classList.add('tree-cms_pageName');
         
-        pageTitleDispElement.innerHTML = 'new page';
+        pageTitleDispElement.innerHTML = this.pages[pageID]['title'];
         pageTitleDispElement.style.display = 'inline';
 
-        pageTitleInputElement.value = 'new page';
+        pageTitleInputElement.value = this.pages[pageID]['title'];
         pageTitleInputElement.style.display = 'none';
 
         pageIconElement.addEventListener('click',()=>{
             pageEditBool = !pageEditBool;
 
             if(pageEditBool){
+                this.base.lock(this.bookID,pageID);
                 pageTitleDispElement.style.display = 'none';
                 pageTitleInputElement.style.display = 'inline';
             }else{
+                this.base.unlock();
                 pageTitleDispElement.style.display = 'inline';
-                pageTitleDispElement.innerHTML = pageTitleInputElement.value;
+                this.pages[pageID]['title'] = pageTitleInputElement.value
+                pageTitleDispElement.innerHTML = this.pages[pageID]['title'];
                 pageTitleInputElement.style.display = 'none';
             }
         });
@@ -318,7 +416,7 @@ class TreeCMSBook {
         newPageElement.appendChild(pageTitleElement);
 
         newPageElement.addEventListener('dblclick',()=>{
-            this.bookEditor.open(this.pages[pageID]);
+            this.pageOpen(pageID);
         });
 
         return newPageElement;
@@ -328,12 +426,15 @@ class TreeCMSBook {
     private bookOpen = ()=>{
         this.bookEditor.close();
         this.bookInfo.open(this);
+        this.bookToolbar.bookEditOpen(this);
     }
 
     //ページのエディタを開く
     private pageOpen = (pageID:number)=>{
         this.bookInfo.close();
-        this.bookEditor.open(this.pages)
+        this.bookEditor.open(this.pages);
+        this.bookToolbar.pageEditOpen(this,pageID);
+        this.base.sideClose();
     }
 }
 
@@ -368,18 +469,48 @@ class TreeCMSBookInfo {
     }
 }
 
+class TreeCMSToolBar {
+    private element:HTMLElement;
+
+    //編集中のオブジェクト名が入るエレメント
+    private targetTitleElement:HTMLElement;
+
+    constructor() {
+        this.element = <HTMLElement>document.querySelector('.toolbarArea');
+
+        this.targetTitleElement = <HTMLElement>document.querySelector('.editTarget');
+    }
+
+    //ブック情報編集のツールバーを開く
+    public bookEditOpen = (book:TreeCMSBook)=>{
+        console.log('toolbar book disp');
+        let titleString:string = '<i class="fa fa-book" aria-hidden="true"></i><label>'+book.title+'</label>';
+        this.targetTitleElement.innerHTML = titleString;
+    }
+
+    //ページ編集のツールバーを開く
+    public pageEditOpen = (book:TreeCMSBook,pageID:number)=>{
+        let titleString:string = '<i class="fa fa-book" aria-hidden="true"></i><label>'+book.title+'</label>'
+                               + ' >'
+                               + '<i class="fa fa-file" aria-hidden="true"></i><label>'+book.pages[pageID]['title']+'</label>';
+        this.targetTitleElement.innerHTML = titleString;
+    }
+}
+
 class TreeCMS {
     private bookbar:TreeCMSBookBar;
 
     private editor:TreeCMSEditor;
     private bookInfo:TreeCMSBookInfo;
+    private toolbar:TreeCMSToolBar;
 
     constructor(){
         window.onload = ()=>{
             this.editor = new TreeCMSEditor();
             this.bookInfo = new TreeCMSBookInfo();
+            this.toolbar = new TreeCMSToolBar();
 
-            this.bookbar = new TreeCMSBookBar(this.editor,this.bookInfo);
+            this.bookbar = new TreeCMSBookBar(this.editor,this.bookInfo,this.toolbar);
         }
     }
 }
