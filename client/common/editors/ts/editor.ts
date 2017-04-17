@@ -1,3 +1,5 @@
+import TreeD from '../../define/treeD';
+
 export default class Editor {
     //エディターのっ展開先エレメント
     protected element:HTMLElement;
@@ -20,7 +22,11 @@ export default class Editor {
     //エディターのデリートパーツ
     protected editorDelete:HTMLElement;
 
-    constructor(elementSelector:string, componentElementSelector:string,editorTitle:string) {
+
+    //エディターのタイプ
+    protected editorType:number;
+
+    constructor(elementSelector:string, componentElementSelector:string,editorType:number) {
         if(elementSelector) {
             this.element = <HTMLElement>document.querySelector(elementSelector);
             this.element.classList.add('tree-editor');
@@ -45,8 +51,10 @@ export default class Editor {
             return;
         }
 
+        let editorTypeString:string = this.detectEditorType(editorType);
+
         this.editor = document.createElement('div');
-        this.editor.classList.add(editorTitle+'Editor');
+        this.editor.classList.add(editorTypeString+'Editor');
         this.editor.classList.add('tree-editor');
 
         this.editorHead = document.createElement('div');
@@ -54,13 +62,31 @@ export default class Editor {
 
         this.editorTitle = document.createElement('div');
         this.editorTitle.classList.add('editorTitle');
-        this.editorTitle.innerHTML = editorTitle;
+        this.editorTitle.innerHTML = editorTypeString;
 
         this.editorDelete = document.createElement('a');
         this.editorDelete.classList.add('delete');
 
         this.editorBody = document.createElement('div');
         this.editorBody.style.width = '100%';
+    }
+
+    private detectEditorType(editorType){
+        let editorTypeString:string = '';
+
+        switch(editorType){
+            case TreeD.COMPONENT.MARKDOWN:
+                editorTypeString = 'markdown';
+                break;
+            case TreeD.COMPONENT.HIGHLIGHT:
+                editorTypeString = 'highlight';
+                break;
+            case TreeD.COMPONENT.PLAYGROUND:
+                editorTypeString = 'playground';
+                break;
+        }
+
+        return editorTypeString;
     }
 
 

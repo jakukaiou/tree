@@ -1,6 +1,7 @@
 import '../scss/editor.scss';
 import '../../components/scss/playground.scss';
 import Editor from './editor';
+import TreeD from '../../define/treeD';
 import * as ace from 'brace';
 
 import PlayGround from '../../components/ts/playground';
@@ -24,7 +25,7 @@ export default class PlayGroundEditor extends Editor {
     private jseditor:ace.Editor;
 
     constructor(elementSelector:string, componentElementSelector:string){
-        super(elementSelector,componentElementSelector,'playground');
+        super(elementSelector,componentElementSelector,TreeD.COMPONENT.PLAYGROUND);
 
         this.element.style.width='100%';
 

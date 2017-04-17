@@ -145,7 +145,7 @@ class TreeCMSBookBar {
 
     private editorTreeview:HTMLElement;
     private editorResizer:HTMLElement;
-    private openBool:Boolean;
+    private nextOpenBool:Boolean;
 
     //ブックバーの各種操作が可能かどうか
     //このクラス内ではこれで判断
@@ -177,11 +177,12 @@ class TreeCMSBookBar {
         });
 
         this.editorTreeview = <HTMLElement>document.querySelector('.tree-cms_treeview');
-        this.openBool = true;
+        this.nextOpenBool = false;
         this.editorResizer = <HTMLElement>document.querySelector('.tree-cms_resizer');
         this.editorResizer.addEventListener('click',()=>{
-            this.openBool = !this.openBool;
-            if(this.openBool){
+            console.log('resizer');
+            console.log(this.lockBool);
+            if(this.nextOpenBool){
                 this.sideOpen();
             }else{
                 this.sideClose();
@@ -204,12 +205,14 @@ class TreeCMSBookBar {
         if(!this.lockBool){
             this.editorTreeview.style.width= '180px';
         }
+        this.nextOpenBool = false;
     }
 
     public sideClose = ()=>{
         if(!this.lockBool){
             this.editorTreeview.style.width= '0px';
         }
+        this.nextOpenBool = true;
     }
 
     //ブックバーをロックする
@@ -239,7 +242,7 @@ class TreeCMSBookBar {
                         return false;
                     }
                 }else{
-                    if(this.lockBookID == bookID){
+                    if(this.lockBookID == bookID && this.lockPageID == 0){
                         return true;
                     }else{
                         return false;
@@ -287,7 +290,6 @@ class TreeCMSBook {
 
         this.pages = bookPages;
         this.nextPageID = this.pages.length + 1;
-        console.log(this.nextPageID);
 
         this.title = 'newBook';
 
@@ -310,26 +312,32 @@ class TreeCMSBook {
 
         element.classList.add('tree-cms_bookName');
         element.appendChild(bookIconElement);
-        element.appendChild(bookTitleDispElement);
-        element.appendChild(bookTitleInputElement);
+
+        bookTitleElement.classList.add('tree-cms_bookTitleContainer');
+        bookTitleElement.appendChild(bookTitleDispElement);
+        bookTitleElement.appendChild(bookTitleInputElement);
+
+        element.appendChild(bookTitleElement);
 
         bookIconElement.addEventListener('click',()=>{
-            bookEditBool = !bookEditBool;
+            if(this.base.available(this.bookID)){
+                bookEditBool = !bookEditBool;
 
-            if(bookEditBool){
-                this.base.lock(this.bookID);
-                bookTitleDispElement.style.display = 'none';
-                bookTitleInputElement.style.display = 'inline';
-            }else{
-                this.base.unlock();
-                bookTitleDispElement.style.display = 'inline';
-                bookTitleInputElement.style.display = 'none';
-                this.title = bookTitleInputElement.value;
-                bookTitleDispElement.innerHTML = bookTitleInputElement.value;
+                if(bookEditBool){
+                    this.base.lock(this.bookID);
+                    bookTitleDispElement.style.display = 'none';
+                    bookTitleInputElement.style.display = 'inline';
+                }else{
+                    this.base.unlock();
+                    bookTitleDispElement.style.display = 'inline';
+                    bookTitleInputElement.style.display = 'none';
+                    this.title = bookTitleInputElement.value;
+                    bookTitleDispElement.innerHTML = bookTitleInputElement.value;
+                }
             }
         });
 
-        element.addEventListener('dblclick',()=>{
+        bookTitleElement.addEventListener('dblclick',()=>{
             this.bookOpen();
         });
 
@@ -373,7 +381,7 @@ class TreeCMSBook {
             contents:[]
         };
 
-        let pageEditBool:Boolean = false;
+        let pageEditBool:Boolean = true;
 
         let newPageElement:HTMLElement = document.createElement('div');
 
@@ -395,29 +403,35 @@ class TreeCMSBook {
         pageTitleInputElement.style.display = 'none';
 
         pageIconElement.addEventListener('click',()=>{
-            pageEditBool = !pageEditBool;
+            if(this.base.available(this.bookID,pageID)){
+                pageEditBool = !pageEditBool;
 
-            if(pageEditBool){
-                this.base.lock(this.bookID,pageID);
-                pageTitleDispElement.style.display = 'none';
-                pageTitleInputElement.style.display = 'inline';
-            }else{
-                this.base.unlock();
-                pageTitleDispElement.style.display = 'inline';
-                this.pages[pageID]['title'] = pageTitleInputElement.value
-                pageTitleDispElement.innerHTML = this.pages[pageID]['title'];
-                pageTitleInputElement.style.display = 'none';
+                if(pageEditBool){
+                    this.base.lock(this.bookID,pageID);
+                    pageTitleDispElement.style.display = 'none';
+                    pageTitleInputElement.style.display = 'inline';
+                }else{
+                    this.base.unlock();
+                    pageTitleDispElement.style.display = 'inline';
+                    this.pages[pageID]['title'] = pageTitleInputElement.value
+                    pageTitleDispElement.innerHTML = this.pages[pageID]['title'];
+                    pageTitleInputElement.style.display = 'none';
+                }
             }
         });
 
         pageTitleElement.appendChild(pageTitleDispElement);
         pageTitleElement.appendChild(pageTitleInputElement);
 
-        newPageElement.appendChild(pageTitleElement);
-
-        newPageElement.addEventListener('dblclick',()=>{
+        pageTitleElement.addEventListener('dblclick',()=>{
             this.pageOpen(pageID);
         });
+
+        newPageElement.appendChild(pageTitleElement);
+
+        this.base.lock(this.bookID,pageID);
+        pageTitleDispElement.style.display = 'none';
+        pageTitleInputElement.style.display = 'inline';
 
         return newPageElement;
     }

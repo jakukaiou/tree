@@ -1,5 +1,6 @@
 import '../scss/editor.scss';
 import Editor from './editor';
+import TreeD from '../../define/treeD';
 import Util from '../../utilities/util';
 import Markdown from '../../components/ts/markdown';
 
@@ -8,7 +9,7 @@ export default class MarkdownEditor extends Editor {
     private markdown:Markdown;
 
     constructor(elementSelector:string, componentElementSelector:string){
-        super(elementSelector,componentElementSelector,'markdown');
+        super(elementSelector,componentElementSelector,TreeD.COMPONENT.MARKDOWN);
 
 
         this.markdownEditor = document.createElement('textarea');

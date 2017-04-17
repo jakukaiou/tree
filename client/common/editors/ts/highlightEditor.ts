@@ -1,6 +1,6 @@
 import '../scss/editor.scss';
 import Editor from './editor';
-//languageの設定を追加・render関数を追加
+import TreeD from '../../define/treeD';
 import Highlight from '../../components/ts/highlight';
 
 import * as ace from 'brace';
@@ -32,7 +32,7 @@ export default class MarkdownEditor extends Editor {
     private highlight:Highlight;
 
     constructor(elementSelector:string, componentElementSelector:string){
-        super(elementSelector,componentElementSelector,'highlight');
+        super(elementSelector,componentElementSelector,TreeD.COMPONENT.HIGHLIGHT);
         this.previewElement.classList.add('aceEdit');
 
         let langSelector = document.createElement('select');
