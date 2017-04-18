@@ -26,7 +26,7 @@ export default class Editor {
     //エディターのタイプ
     protected editorType:number;
 
-    constructor(elementSelector:string, componentElementSelector:string,editorType:number) {
+    constructor(elementSelector:string, componentElementSelector:string,editorType:number,data:Object) {
         if(elementSelector) {
             this.element = <HTMLElement>document.querySelector(elementSelector);
             this.element.classList.add('tree-editor');

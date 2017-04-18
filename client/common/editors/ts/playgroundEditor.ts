@@ -24,8 +24,9 @@ export default class PlayGroundEditor extends Editor {
     private csseditor:ace.Editor;
     private jseditor:ace.Editor;
 
-    constructor(elementSelector:string, componentElementSelector:string){
-        super(elementSelector,componentElementSelector,TreeD.COMPONENT.PLAYGROUND);
+    constructor(elementSelector:string, componentElementSelector:string,data:Object){
+        super(elementSelector,componentElementSelector,TreeD.COMPONENT.PLAYGROUND,data);
+        this.playGround = new PlayGround(componentElementSelector,{});
 
         this.element.style.width='100%';
 
@@ -60,32 +61,33 @@ export default class PlayGroundEditor extends Editor {
             this.handleClick(this.navSwitches[index],index);
         }
 
-        let htmleditor = ace.edit(<HTMLElement>document.querySelector(elementSelector + ' #html-editor'));
-        htmleditor.$blockScrolling = Infinity;
-        htmleditor.getSession().setMode('ace/mode/html');
-        htmleditor.setTheme('ace/theme/monokai');
-        htmleditor.on('change',()=>{
-            this.playGround.update(htmleditor.getValue(),csseditor.getValue(),jseditor.getValue());
+        this.htmleditor = ace.edit(<HTMLElement>document.querySelector(elementSelector + ' #html-editor'));
+        this.htmleditor.$blockScrolling = Infinity;
+        this.htmleditor.getSession().setMode('ace/mode/html');
+        this.htmleditor.setTheme('ace/theme/monokai');
+        this.htmleditor.on('change',()=>{
+            this.playGround.update(this.htmleditor.getValue(),this.csseditor.getValue(),this.jseditor.getValue());
         });
 
-        let csseditor = ace.edit(<HTMLElement>document.querySelector(elementSelector + ' #css-editor'));
-        csseditor.$blockScrolling = Infinity;
-        csseditor.getSession().setMode('ace/mode/css');
-        csseditor.setTheme('ace/theme/monokai');
-        csseditor.on('change',()=>{
-            this.playGround.update(htmleditor.getValue(),csseditor.getValue(),jseditor.getValue());
+        this.csseditor = ace.edit(<HTMLElement>document.querySelector(elementSelector + ' #css-editor'));
+        this.csseditor.$blockScrolling = Infinity;
+        this.csseditor.getSession().setMode('ace/mode/css');
+        this.csseditor.setTheme('ace/theme/monokai');
+        this.csseditor.on('change',()=>{
+            this.playGround.update(this.htmleditor.getValue(),this.csseditor.getValue(),this.jseditor.getValue());
         });
 
-        let jseditor = ace.edit(<HTMLElement>document.querySelector(elementSelector + ' #js-editor'));
-        jseditor.$blockScrolling = Infinity;
-        jseditor.getSession().setMode('ace/mode/javascript');
-        jseditor.setTheme('ace/theme/monokai');
-        jseditor.on('change',()=>{
-            this.playGround.update(htmleditor.getValue(),csseditor.getValue(),jseditor.getValue());
+        this.jseditor = ace.edit(<HTMLElement>document.querySelector(elementSelector + ' #js-editor'));
+        this.jseditor.$blockScrolling = Infinity;
+        this.jseditor.getSession().setMode('ace/mode/javascript');
+        this.jseditor.setTheme('ace/theme/monokai');
+        this.jseditor.on('change',()=>{
+            this.playGround.update(this.htmleditor.getValue(),this.csseditor.getValue(),this.jseditor.getValue());
         });
 
         this.previewElement.classList.add('playground');
-        this.playGround = new PlayGround(componentElementSelector,{});
+
+        this.load(data['data']['htmlsource'],data['data']['csssource'],data['data']['jssource']);
     }
 
     private createPlayGroundArea():string {
@@ -138,6 +140,40 @@ export default class PlayGroundEditor extends Editor {
         this.tabContents[index].classList.add('is-active');
         this.navSwitches[index].classList.add('is-active');
         this.activeIndex = index;
+    }
+
+    private load = (htmlsource:string,csssource:string,jssource:string)=>{
+        let initHtml:string = '';
+        let initCss:string = '';
+        let initJs:string = '';
+
+        if(htmlsource){
+            initHtml = htmlsource;
+        }
+
+        if(csssource){
+            initCss = csssource;
+        }
+
+        if(jssource){
+            initJs = jssource;
+        }
+
+        this.htmleditor.setValue(initHtml);
+        this.csseditor.setValue(initCss);
+        this.jseditor.setValue(initJs);
+
+        this.playGround.update(initHtml,initCss,initJs);
+    }
+
+    public exportData = ()=>{
+        let data = {
+            htmlsource:this.htmleditor.getValue(),
+            csssource:this.csseditor.getValue(),
+            jssource:this.jseditor.getValue()
+        }
+
+        return data;
     }
 }
 

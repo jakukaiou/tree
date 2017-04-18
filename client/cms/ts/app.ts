@@ -64,24 +64,45 @@ class TreeCMSEditor {
         this.addMarkdown = <HTMLElement>document.querySelector('.selectEditor .markdown');
         this.addMarkdown.addEventListener('click',()=>{
             console.log('make markdown Editor');
-            this.addEditor(TreeD.COMPONENT.MARKDOWN);
+            let data:Object = {
+                type:TreeD.COMPONENT.MARKDOWN,
+                data:{
+                    source:''
+                }
+            }
+            this.addEditor(TreeD.COMPONENT.MARKDOWN,data);
         });
 
         //ハイライトエディタの追加処理
         this.addHighlight = <HTMLElement>document.querySelector('.selectEditor .highlighter');
         this.addHighlight.addEventListener('click',()=>{
             console.log('make highlight Editor');
-            this.addEditor(TreeD.COMPONENT.HIGHLIGHT);
+            let data:Object = {
+                type:TreeD.COMPONENT.HIGHLIGHT,
+                data:{
+                    language:'html',
+                    source:''
+                }
+            }
+            this.addEditor(TreeD.COMPONENT.HIGHLIGHT,data);
         });
 
         this.addHighlight = <HTMLElement>document.querySelector('.selectEditor .playground');
         this.addHighlight.addEventListener('click',()=>{
             console.log('make playground Editor');
-            this.addEditor(TreeD.COMPONENT.PLAYGROUND);
+            let data:Object = {
+                type:TreeD.COMPONENT.PLAYGROUND,
+                data:{
+                    htmlsource:'',
+                    csssource:'',
+                    jssource:'',
+                }
+            }
+            this.addEditor(TreeD.COMPONENT.PLAYGROUND,data);
         });
     }
 
-    private addEditor= (type)=>{
+    private addEditor= (type,data:Object)=>{
         this.addEditorButton.style.display = 'block';
         this.addEditorMenu.style.display = 'none';
         let addEditor:Element = document.createElement('div');     //追加するエディター
@@ -97,13 +118,13 @@ class TreeCMSEditor {
 
         switch(type){
             case TreeD.COMPONENT.MARKDOWN:
-                this.editors[this.nextEditorID] = new MarkdownEditor('#'+editorIDstring, '#'+componentIDString);
+                this.editors[this.nextEditorID] = new MarkdownEditor('#'+editorIDstring, '#'+componentIDString, data);
                 break;
             case TreeD.COMPONENT.HIGHLIGHT:
-                this.editors[this.nextEditorID] = new HighlightEditor('#'+editorIDstring, '#'+componentIDString);
+                this.editors[this.nextEditorID] = new HighlightEditor('#'+editorIDstring, '#'+componentIDString, data);
                 break;
             case TreeD.COMPONENT.PLAYGROUND:
-                this.editors[this.nextEditorID] = new PlayGroundEditor('#'+editorIDstring, '#'+componentIDString);
+                this.editors[this.nextEditorID] = new PlayGroundEditor('#'+editorIDstring, '#'+componentIDString, data);
                 break;
         }
 

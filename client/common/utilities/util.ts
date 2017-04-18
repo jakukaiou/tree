@@ -1,7 +1,7 @@
 export default class Util {
-    public static TAexpand(element:HTMLElement,size:number){
+    public static TAexpand(element:HTMLElement,size:number,col:number){
         element.style.lineHeight = size.toString() + "px";//init
-        element.style.height = size.toString() + "px";
+        element.style.height = (size * col).toString() + "px";
 
         element.addEventListener("input",function(evt){
             if(this.scrollHeight > this.offsetHeight){   
