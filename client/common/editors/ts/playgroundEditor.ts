@@ -87,7 +87,7 @@ export default class PlayGroundEditor extends Editor {
 
         this.previewElement.classList.add('playground');
 
-        this.load(data['data']['htmlsource'],data['data']['csssource'],data['data']['jssource']);
+        this.load(data['htmlsource'],data['csssource'],data['jssource']);
     }
 
     private createPlayGroundArea():string {

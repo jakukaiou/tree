@@ -4,6 +4,15 @@
     display: inline-flex;
 }
 
+.toolbarButtonContainer {
+    display: inline-flex;
+}
+
+.toolbarButtonContainer .toolbar-delete {
+    text-align: center;
+    vertical-align: middle;
+}
+
 .editTargetHead {
     font-size: 16px;
     color: #df3a2d;
@@ -13,4 +22,8 @@
 
 .editTarget i {
     font-size: 16px;
+}
+
+.nav-item.editToolbar:hover {
+    color: #ffffff;
 }

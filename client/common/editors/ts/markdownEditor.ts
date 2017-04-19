@@ -14,7 +14,7 @@ export default class MarkdownEditor extends Editor {
         this.markdown = new Markdown(componentElementSelector,{});
 
         this.markdownEditor = document.createElement('textarea');
-        this.load(data['data']['source']);
+        this.load(data['source']);
         Util.TAexpand(this.markdownEditor,20,this.col);
         this.markdownEditor.addEventListener('keyup',()=>{
             this.markdown.render(this.markdownEditor.value);

@@ -48,7 +48,7 @@ export default class MarkdownEditor extends Editor {
         this.aceEditor.setTheme('ace/theme/monokai');
         this.aceEditor.getSession().setMode('ace/mode/html');
 
-        this.load(data['data']['language'],data['data']['source']);
+        this.load(data['language'],data['source']);
 
         this.aceEditor.on('change',()=>{
             this.highlight.editor.setValue(this.aceEditor.getValue());
