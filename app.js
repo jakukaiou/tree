@@ -23,6 +23,9 @@ app.set('views', path.resolve(__dirname, './server/views'));
 app.locals.env = process.env.NODE_ENV || 'dev';
 app.locals.reload = true;
 
+//cdnlib add
+app.use('/cdnlib',express.static(path.join(__dirname, 'cdnlib')));
+
 if (isDev) {
 
     // static assets served by webpack-dev-middleware & webpack-hot-middleware for development
