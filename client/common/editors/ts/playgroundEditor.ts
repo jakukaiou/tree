@@ -166,14 +166,19 @@ export default class PlayGroundEditor extends Editor {
         this.playGround.update(initHtml,initCss,initJs);
     }
 
-    public exportData = ()=>{
+    public exportData(){
         let data = {
             htmlsource:this.htmleditor.getValue(),
             csssource:this.csseditor.getValue(),
             jssource:this.jseditor.getValue()
         }
 
-        return data;
+        let obj = {
+            type:TreeD.COMPONENT.PLAYGROUND,
+            data:data
+        }
+
+        return obj;
     }
 }
 

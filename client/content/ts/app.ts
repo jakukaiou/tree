@@ -472,109 +472,59 @@ let nodePages:Array<Array<Object>> = []; //これは実際にはかなり違う�
 
 nodeData[1] = {
     id: 1,
-    title: 'Javascriptの基本',
+    title: 'テストブック',
     prev: [],
-    next: [3],
+    next: [2]
 };
 
 nodeData[2] = {
     id: 2,
-    title: 'Virtual DOM',
-    prev: [],
-    next: [3],
+    title: 'テストブック2',
+    prev: [1],
+    next: [3,4]
 };
 
 nodeData[3] = {
     id: 3,
-    title: 'Mithril.js',
-    prev: [1,2],
-    next: [4],
+    title: 'テストブック3',
+    prev: [2],
+    next: []
 };
 
 nodeData[4] = {
     id: 4,
-    title: 'Polythene',
-    prev: [3],
-    next: [],
+    title: 'テストブック4',
+    prev: [2],
+    next: []
 };
 
-//nodeData1の持つページ群
 nodePages[1] = [
     {
-        title:'npm',
+        title:'テストページ',
         contents:[
             {
                 type:TreeD.COMPONENT.MARKDOWN,
                 data:{
-                    source: 'この文章はテスト用の例文です。'
-                }
-            },
-            {
-                type:TreeD.COMPONENT.HIGHLIGHT,
-                data:{
-                    laungage: 'html',
-                    source: '<!doctype html>\n' +
-                            '<body>\n' +
-                            '   <script src="node.js"></script>\n' +
-                            '       <script>\n' +
-                            '       var root = document.body\n' +
-                            '       </script>\n' +
-                            '</body>'
-                }
-            },
-            {
-                type:TreeD.COMPONENT.MARKDOWN,
-                data:'この文章は末尾の文章です。'
-            },
-        ]
-    }
-];
-
-//nodeData2の持つページ群
-nodePages[2] = [
-    {
-        title:'仮想のDOM',
-        contents:[
-            {
-                type:TreeD.COMPONENT.MARKDOWN,
-                data:{
-                    source: 'VirtualDOMは'
-                }
-            },
-            {
-                type:TreeD.COMPONENT.HIGHLIGHT,
-                data:{
-                    laungage: 'html',
-                    source: '<!doctype html>\n' +
-                            '<body>\n' +
-                            '       すこぶる' +
-                            '</body>'
-                }
-            },
-            {
-                type:TreeD.COMPONENT.MARKDOWN,
-                data:{
-                    source: 'すごいです。'
-                }
-            },
-        ]
-    }
-];
-
-//nodeData3の持つページ群
-nodePages[3] = [
-    {
-        title:'Mithril.jsとは？',
-        contents:[
-            {
-                type:TreeD.COMPONENT.MARKDOWN,
-                data:{
-                    source: 'Mithril.jsは、VirtualDOMの技術を利用した、クライアントサイドのJavascriptフレームワークです。' +
-                            'SPAをはじめとしたWebアプリケーションの作成を強力にサポートします。' +
-                            'Mithrilはその他のVirtual DOMフレームワークと比較して、APIの数が少なく動作が高速という点が勝っています。' +
-                            '\n> 余計な機能がないのでファイルサイズも軽量で、他の様々なライブラリやコンポーネントとの統合も容易です。' +
-                            '\n> 素晴らしいですね。' +
-                            '\n\nUndoは<kbd>Command</kbd> + <kbd>Z</kbd>'
+                    source: '# title h1\n' +
+                            '## title h2\n' +
+                            '### title h3\n' +
+                            '#### title h4\n' +
+                            '##### title h5\n' +
+                            '> これは`引用`です。\n' +
+                            '> 引用の2行目です。\n\n' +
+                            '* 1番目\n' +
+                            '* 2番目\n' +
+                            '* 3番目\n\n' +
+                            'Undoは<kbd>Command</kbd> + <kbd>Z</kbd>\n\n' +
+                            '[Google先生](https://www.google.co.jp/)\n' +
+                            '~~取り消し~~\n' +
+                            '**strong**\n' +
+                            '*italic*\n' +
+                            '***strong italic***\n\n' +
+                            '| これは | 表 | です |\n' +
+                            '|:--:|:--:|:--:|\n' +
+                            '| 表の | 中身 | です |\n\n' +
+                            '**Eulers formula**: $$$ e^{i\\theta} = \cos \\theta + i\sin \\theta. $$$'
                 }
             },
             {
@@ -604,48 +554,109 @@ nodePages[3] = [
                     csssource:  'h1 {\n' +
                                 '   color: #f00;\n' +
                                 '}',
-                    jssource:   'document.querySelector("h1").style.backgroundColor = "#ffff00"'
-                }
-            },
-            {
-                type:TreeD.COMPONENT.MARKDOWN,
-                data:{
-                    source: '$$$a^2_1+b^2_1=5$$$'
+                    jssource:   'document.querySelector("h1").style.backgroundColor = "#ffff00";'
                 }
             }
         ]
     },
     {
-        title:'他VirtualDomライブラリとの差異',
+        title:'テストページ2',
         contents:[
             {
                 type:TreeD.COMPONENT.MARKDOWN,
                 data:{
-                    source: 'テスト'
+                    source: '`強調文字`からの**italic**からの~~取り消し~~'
                 }
             },
             {
-                type:TreeD.COMPONENT.MARKDOWN,
+                type:TreeD.COMPONENT.PLAYGROUND,
                 data:{
-                    source: 'てすと'
+                    htmlsource: '<h1>Hello World!</h1>',
+                    csssource:  'h1 {\n' +
+                                '   color: #ffffff;\n' +
+                                '}',
+                    jssource:   'document.querySelector("h1").style.backgroundColor = "#00ff00";'
                 }
             }
         ]
     }
 ];
 
-//nodeData4の持つページ群
-nodePages[4] = [
+nodePages[2] = [
     {
-        title:'Test.js',
+        title:'テストページ3',
         contents:[
             {
                 type:TreeD.COMPONENT.MARKDOWN,
-                data:'テスト'
+                data:{
+                    source: 'この文章はテスト用の例文です。'
+                }
+            },
+            {
+                type:TreeD.COMPONENT.HIGHLIGHT,
+                data:{
+                    laungage: 'html',
+                    source: '<!doctype html>\n' +
+                            '<body>\n' +
+                            '   <script src="node.js"></script>\n' +
+                            '       <script>\n' +
+                            '       var root = document.body\n' +
+                            '       </script>\n' +
+                            '</body>'
+                }
             },
             {
                 type:TreeD.COMPONENT.MARKDOWN,
-                data:'てすと'
+                data:{
+                    source: 'この文章は末尾の文章です。'
+                }
+            },
+        ]
+    }
+];
+
+nodePages[3] = [
+    {
+        title:'テストページ4',
+        contents:[
+            {
+                type:TreeD.COMPONENT.MARKDOWN,
+                data:{
+                    source: 'この文章はテスト用の例文です。'
+                }
+            },
+            {
+                type:TreeD.COMPONENT.HIGHLIGHT,
+                data:{
+                    laungage: 'html',
+                    source: '<!doctype html>\n' +
+                            '<body>\n' +
+                            '   <script src="node.js"></script>\n' +
+                            '       <script>\n' +
+                            '       var root = document.body\n' +
+                            '       </script>\n' +
+                            '</body>'
+                }
+            },
+            {
+                type:TreeD.COMPONENT.MARKDOWN,
+                data:{
+                    source: 'この文章は末尾の文章です。'
+                }
+            },
+        ]
+    }
+];
+
+nodePages[4] = [
+    {
+        title:'テストページ5',
+        contents:[
+            {
+                type:TreeD.COMPONENT.MARKDOWN,
+                data:{
+                    source: 'mark down document'
+                }
             }
         ]
     }

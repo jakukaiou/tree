@@ -103,12 +103,17 @@ export default class MarkdownEditor extends Editor {
         this.highlight.setLanguage(lang);
     }
 
-    public exportData = ()=>{
+    public exportData(){
         let data = {
             language:this.langSelector.value,
             source:this.aceEditor.getValue()
         }
 
-        return data;
+        let obj = {
+            type:TreeD.COMPONENT.HIGHLIGHT,
+            data:data
+        }
+
+        return obj;
     }
 }

@@ -36,11 +36,16 @@ export default class MarkdownEditor extends Editor {
         this.markdown.render(initSource);
     }
 
-    public exportData = ()=>{
+    public exportData(){
         let data = {
             source:this.markdownEditor.value
         }
 
-        return data;
+        let obj = {
+            type:TreeD.COMPONENT.MARKDOWN,
+            data:data
+        }
+
+        return obj;
     }
 }

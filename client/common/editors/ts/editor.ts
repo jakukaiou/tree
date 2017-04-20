@@ -114,4 +114,8 @@ export default class Editor {
 
         this.element.appendChild(this.editor);
     }
+
+    protected exportData(){
+
+    }
 }

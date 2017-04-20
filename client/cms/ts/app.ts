@@ -117,6 +117,7 @@ class TreeCMSEditor {
         this.addEditorMenu.style.display = 'none';
         let addEditor:Element = document.createElement('div');     //追加するエディター
         let addComponent:Element = document.createElement('div');  //追加するコンポーネント
+        let id:number = this.nextEditorID;
 
         let editorIDstring:string = 'component-editor'+this.nextEditorID.toString();
         addEditor.id = editorIDstring;
@@ -141,6 +142,7 @@ class TreeCMSEditor {
         }
 
         editor.editorDelete.addEventListener('click',()=>{
+            delete this.editors[id];
             this.editorArea.removeChild(addEditor);
             this.previewArea.removeChild(addComponent);
         });
@@ -168,12 +170,27 @@ class TreeCMSEditor {
         this.active = true;
     }
 
+    //初期値からエディタを生成
     private loadData = (title:string,contents:Object)=>{
         this.targetPageTitle = title;
         let contentsLength = Object.keys(contents).length;
         Object.keys(contents).map((key)=>{
             this.addEditor(contents[key]['type'],contents[key]['data']);
         });
+    }
+
+    //エディタの表示内容をオブジェクトとして出力
+    public exportData = ()=>{
+        let exportObj = {};
+        exportObj['title'] = this.targetPageTitle;
+        let contentArray:Array<Object> = [];
+        Object.keys(this.editors).map((key)=>{
+            contentArray.push(this.editors[key].exportData());
+        });
+
+        exportObj['contents'] = contentArray;
+
+        return exportObj;
     }
 
     public reset = ()=>{
@@ -186,6 +203,7 @@ class TreeCMSEditor {
             this.previewArea.removeChild(document.querySelector(previewIDstring));
         });
 
+        this.nextEditorID = 0;
         this.editors = {};
         this.previews = {};
         this.active = false;
@@ -339,7 +357,7 @@ class TreeCMSBook {
     //ブックの情報を開く画面 ブック自体の情報を編集する時にアクティブにする
     private bookInfo:TreeCMSBookInfo;
     //ページのエディタ画面 ページ編集時にアクティブにする
-    private bookEditor:TreeCMSEditor;
+    public bookEditor:TreeCMSEditor;
     //ブックのツールバー
     private bookToolbar:TreeCMSToolBar;
     //bookBarクラス
@@ -545,6 +563,11 @@ class TreeCMSBook {
         this.bookToolbar.pageEditOpen(this,pageID);
         this.base.sideClose();
     }
+
+    //ブックのページを置き換える
+    public pageUpdate = (pageID,pageData:Object)=>{
+        this.pages[pageID] = pageData;
+    }
 }
 
 class TreeCMSBookInfo {
@@ -592,6 +615,12 @@ class TreeCMSToolBar {
     //消去ボタン
     private deleteButtonElement:HTMLElement;
 
+    //開いているブックを入れる
+    private book:TreeCMSBook;
+
+    //開いているページのIDを入れる
+    private pageID:number;
+
     constructor() {
         this.element = <HTMLElement>document.querySelector('.toolbarArea');
         this.editmode = EDITMODE.NONE;
@@ -608,7 +637,7 @@ class TreeCMSToolBar {
 
                     break;
                 case EDITMODE.PAGE:
-
+                    this.book.pageUpdate(this.pageID,this.book.bookEditor.exportData());
                     break;
             }
         });
@@ -635,7 +664,8 @@ class TreeCMSToolBar {
 
     //ブック情報編集のツールバーを開く
     public bookEditOpen = (book:TreeCMSBook)=>{
-        console.log('toolbar book disp');
+        this.book = book;
+
         let titleString:string = '<i class="fa fa-book" aria-hidden="true"></i><label>'+book.title+'</label>';
         this.targetTitleElement.innerHTML = titleString;
 
@@ -648,6 +678,9 @@ class TreeCMSToolBar {
 
     //ページ編集のツールバーを開く
     public pageEditOpen = (book:TreeCMSBook,pageID:number)=>{
+        this.book = book;
+        this.pageID = pageID;
+
         let titleString:string = '<i class="fa fa-book" aria-hidden="true"></i><label>'+book.title+'</label>'
                                + ' >'
                                + '<i class="fa fa-file" aria-hidden="true"></i><label>'+book.pages[pageID]['title']+'</label>';
@@ -695,22 +728,50 @@ bookData[2] = {
     id: 2,
     title: 'テストブック2',
     prev: [1],
+    next: [3,4]
+};
+
+bookData[3] = {
+    id: 3,
+    title: 'テストブック3',
+    prev: [2],
+    next: []
+};
+
+bookData[4] = {
+    id: 4,
+    title: 'テストブック4',
+    prev: [2],
     next: []
 };
 
 bookPages[1] = [
     {
-        title:'Mithril.jsとは？',
+        title:'テストページ',
         contents:[
             {
                 type:TreeD.COMPONENT.MARKDOWN,
                 data:{
-                    source: 'Mithril.jsは、VirtualDOMの技術を利用した、クライアントサイドのJavascriptフレームワークです。' +
-                            'SPAをはじめとしたWebアプリケーションの作成を強力にサポートします。' +
-                            'Mithrilはその他のVirtual DOMフレームワークと比較して、APIの数が少なく動作が高速という点が勝っています。' +
-                            '\n> 余計な機能がないのでファイルサイズも軽量で、他の様々なライブラリやコンポーネントとの統合も容易です。' +
-                            '\n> 素晴らしいですね。' +
-                            '\n\nUndoは<kbd>Command</kbd> + <kbd>Z</kbd>'
+                    source: '# title h1\n' +
+                            '## title h2\n' +
+                            '### title h3\n' +
+                            '#### title h4\n' +
+                            '##### title h5\n' +
+                            '> これは`引用`です。\n' +
+                            '> 引用の2行目です。\n\n' +
+                            '* 1番目\n' +
+                            '* 2番目\n' +
+                            '* 3番目\n\n' +
+                            'Undoは<kbd>Command</kbd> + <kbd>Z</kbd>\n\n' +
+                            '[Google先生](https://www.google.co.jp/)\n' +
+                            '~~取り消し~~\n' +
+                            '**strong**\n' +
+                            '*italic*\n' +
+                            '***strong italic***\n\n' +
+                            '| これは | 表 | です |\n' +
+                            '|:--:|:--:|:--:|\n' +
+                            '| 表の | 中身 | です |\n\n' +
+                            '**Eulers formula**: $$$ e^{i\\theta} = \cos \\theta + i\sin \\theta. $$$'
                 }
             },
             {
@@ -740,40 +801,37 @@ bookPages[1] = [
                     csssource:  'h1 {\n' +
                                 '   color: #f00;\n' +
                                 '}',
-                    jssource:   'document.querySelector("h1").style.backgroundColor = "#ffff00"'
-                }
-            },
-            {
-                type:TreeD.COMPONENT.MARKDOWN,
-                data:{
-                    source: '$$$a^2_1+b^2_1=5$$$'
+                    jssource:   'document.querySelector("h1").style.backgroundColor = "#ffff00";'
                 }
             }
         ]
     },
     {
-        title:'他VirtualDomライブラリとの差異',
+        title:'テストページ2',
         contents:[
             {
                 type:TreeD.COMPONENT.MARKDOWN,
                 data:{
-                    source: 'テスト'
+                    source: '`強調文字`からの**italic**からの~~取り消し~~'
                 }
             },
             {
-                type:TreeD.COMPONENT.MARKDOWN,
+                type:TreeD.COMPONENT.PLAYGROUND,
                 data:{
-                    source: 'てすと'
+                    htmlsource: '<h1>Hello World!</h1>',
+                    csssource:  'h1 {\n' +
+                                '   color: #ffffff;\n' +
+                                '}',
+                    jssource:   'document.querySelector("h1").style.backgroundColor = "#00ff00";'
                 }
             }
         ]
     }
 ];
 
-//nodeData1の持つページ群
 bookPages[2] = [
     {
-        title:'npm',
+        title:'テストページ3',
         contents:[
             {
                 type:TreeD.COMPONENT.MARKDOWN,
@@ -796,8 +854,57 @@ bookPages[2] = [
             },
             {
                 type:TreeD.COMPONENT.MARKDOWN,
-                data:'この文章は末尾の文章です。'
+                data:{
+                    source: 'この文章は末尾の文章です。'
+                }
             },
+        ]
+    }
+];
+
+bookPages[3] = [
+    {
+        title:'テストページ4',
+        contents:[
+            {
+                type:TreeD.COMPONENT.MARKDOWN,
+                data:{
+                    source: 'この文章はテスト用の例文です。'
+                }
+            },
+            {
+                type:TreeD.COMPONENT.HIGHLIGHT,
+                data:{
+                    laungage: 'html',
+                    source: '<!doctype html>\n' +
+                            '<body>\n' +
+                            '   <script src="node.js"></script>\n' +
+                            '       <script>\n' +
+                            '       var root = document.body\n' +
+                            '       </script>\n' +
+                            '</body>'
+                }
+            },
+            {
+                type:TreeD.COMPONENT.MARKDOWN,
+                data:{
+                    source: 'この文章は末尾の文章です。'
+                }
+            },
+        ]
+    }
+];
+
+bookPages[4] = [
+    {
+        title:'テストページ5',
+        contents:[
+            {
+                type:TreeD.COMPONENT.MARKDOWN,
+                data:{
+                    source: 'mark down document'
+                }
+            }
         ]
     }
 ];
