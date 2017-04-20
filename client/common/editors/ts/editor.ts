@@ -20,7 +20,7 @@ export default class Editor {
     protected editorTitle:HTMLElement;
 
     //エディターのデリートパーツ
-    protected editorDelete:HTMLElement;
+    public editorDelete:HTMLElement;
 
 
     //エディターのタイプ

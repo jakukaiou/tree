@@ -126,17 +126,26 @@ class TreeCMSEditor {
         addComponent.id = componentIDString;
         this.previewArea.appendChild(addComponent);
 
+        let editor:Editor;
+
         switch(type){
             case TreeD.COMPONENT.MARKDOWN:
-                this.editors[this.nextEditorID] = new MarkdownEditor('#'+editorIDstring, '#'+componentIDString, data);
+                editor = new MarkdownEditor('#'+editorIDstring, '#'+componentIDString, data);
                 break;
             case TreeD.COMPONENT.HIGHLIGHT:
-                this.editors[this.nextEditorID] = new HighlightEditor('#'+editorIDstring, '#'+componentIDString, data);
+                editor = new HighlightEditor('#'+editorIDstring, '#'+componentIDString, data);
                 break;
             case TreeD.COMPONENT.PLAYGROUND:
-                this.editors[this.nextEditorID] = new PlayGroundEditor('#'+editorIDstring, '#'+componentIDString, data);
+                editor = new PlayGroundEditor('#'+editorIDstring, '#'+componentIDString, data);
                 break;
         }
+
+        editor.editorDelete.addEventListener('click',()=>{
+            this.editorArea.removeChild(addEditor);
+            this.previewArea.removeChild(addComponent);
+        });
+
+        this.editors[this.nextEditorID] = editor;
 
         this.nextEditorID++;
     }
@@ -154,6 +163,7 @@ class TreeCMSEditor {
     public open = (book:TreeCMSBook,pageID:number)=>{
         this.targetBook = book;
         this.targetPageID = pageID;
+        this.reset();
         this.loadData(this.targetBook.pages[this.targetPageID]['title'],this.targetBook.pages[this.targetPageID]['contents']);
         this.active = true;
     }
@@ -166,7 +176,7 @@ class TreeCMSEditor {
         });
     }
 
-    public close = ()=>{
+    public reset = ()=>{
         //展開中エディタの削除処理
         Object.keys(this.editors).map((id)=>{
             let editorIDstring:string = '#component-editor'+id.toString();
@@ -352,7 +362,7 @@ class TreeCMSBook {
         this.pages = bookContentsData;
 
         /* start ページの作成処理 */
-        //TODO:ページ作成処理を書く
+        
         /*  end  ページの作成処理 */
 
         this.nextPageID = this.pages.length;
@@ -365,7 +375,7 @@ class TreeCMSBook {
 
         this.element = <HTMLElement>document.querySelector(elementSelector);
         this.element.appendChild(this.createBookTitle(this.title,auto));
-        this.element.appendChild(this.createBookPagesArea());
+        this.element.appendChild(this.createBookPagesArea(bookContentsData));
     }
 
     private createBookTitle = (bookName:string,auto:Boolean)=>{
@@ -425,7 +435,7 @@ class TreeCMSBook {
         return element;
     }
 
-    private createBookPagesArea = ()=>{
+    private createBookPagesArea = (contentsData:Array<Object>)=>{
         let element = document.createElement('div');
         let pageElement = document.createElement('div');
         let addPageElement = document.createElement('div');
@@ -437,9 +447,18 @@ class TreeCMSBook {
         addPageElement.appendChild(Util.createIcon('fa-plus'));
         addPageElement.appendChild(Util.createIcon('fa-file'));
 
+        contentsData.map((value,id)=>{
+            let newPageElement = this.createBookPage(id,value,true);
+            pageElement.appendChild(newPageElement);
+        });
+
         addPageElement.addEventListener('click',()=>{
             if(this.base.available(this.bookID,this.nextPageID)){
-                let newPageElement = this.createBookPage(this.nextPageID);
+                let data = {
+                    title:'new page',
+                    contents:[]
+                };
+                let newPageElement = this.createBookPage(this.nextPageID,data);
                 this.nextPageID++;
                 pageElement.appendChild(newPageElement);
             }
@@ -452,11 +471,8 @@ class TreeCMSBook {
     }
 
     //新規ページ作成
-    private createBookPage = (pageID:number)=>{
-        this.pages[pageID] = {
-            title:'new page',
-            contents:[]
-        };
+    private createBookPage = (pageID:number,data:Object,auto?:Boolean)=>{
+        this.pages[pageID] = data;
 
         let pageEditBool:Boolean = true;
 
@@ -474,10 +490,7 @@ class TreeCMSBook {
         pageTitleElement.classList.add('tree-cms_pageName');
         
         pageTitleDispElement.innerHTML = this.pages[pageID]['title'];
-        pageTitleDispElement.style.display = 'inline';
-
         pageTitleInputElement.value = this.pages[pageID]['title'];
-        pageTitleInputElement.style.display = 'none';
 
         pageIconElement.addEventListener('click',()=>{
             if(this.base.available(this.bookID,pageID)){
@@ -506,16 +519,21 @@ class TreeCMSBook {
 
         newPageElement.appendChild(pageTitleElement);
 
-        this.base.lock(this.bookID,pageID);
-        pageTitleDispElement.style.display = 'none';
-        pageTitleInputElement.style.display = 'inline';
+        if(auto){
+            pageTitleDispElement.style.display = 'inline';
+            pageTitleInputElement.style.display = 'none';  
+        }else{
+            this.base.lock(this.bookID,pageID);
+            pageTitleDispElement.style.display = 'none';
+            pageTitleInputElement.style.display = 'inline';
+        }
 
         return newPageElement;
     }
 
     //ブックの編集ページを開く
     private bookOpen = ()=>{
-        this.bookEditor.close();
+        this.bookEditor.reset();
         this.bookInfo.open(this);
         this.bookToolbar.bookEditOpen(this);
     }
