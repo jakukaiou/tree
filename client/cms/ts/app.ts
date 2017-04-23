@@ -27,6 +27,8 @@ enum EDITMODE {
     PAGE
 }
 
+let dragSource:HTMLElement;
+
 
 //リアルタイムエディターの部分
 class TreeCMSEditor {
@@ -488,6 +490,14 @@ class TreeCMSBook {
             bookTitleInputElement.style.display = 'inline';
         }
 
+        element.setAttribute('draggable','true');
+        element.setAttribute('bookID',this.bookID.toString());
+
+        element.addEventListener('dragstart',(e)=>{
+            e.dataTransfer.setData('bookid',this.bookID.toString());
+            e.dataTransfer.setData('booktitle',this.title);
+        });
+
         return element;
     }
 
@@ -609,6 +619,7 @@ class TreeCMSBook {
 
     public get info (){
         return {
+            id:this.bookID,
             title:this.title,
             prev:this.prevBooks,
             next:this.nextBooks
@@ -625,14 +636,33 @@ class TreeCMSBookInfo {
     private prevBookInfo:Array<Object>;
     private nextBookInfo:Array<Object>;
 
-    //セーブしているかどうか(未セーブの場合はアラートを出すなどする)
-    private saveFlag:Boolean;
+    private dragFlag:Boolean;
 
     constructor(){
         this.element = <HTMLElement>document.querySelector('.tree-cms_bookInfoArea');
         this.prevBookElement = <HTMLElement>document.querySelector('.tree-cms_prevBooks');
         this.nextBookElement = <HTMLElement>document.querySelector('.tree-cms_nextBooks');
-        this.saveFlag = true;
+
+        this.dragFlag = false;
+
+        this.prevBookElement.addEventListener('dragenter',(e)=>{
+            console.log('(dragenter)');
+        });
+
+        this.prevBookElement.addEventListener('dragleave',(e)=>{
+            console.log('(dragleave)');
+        });
+
+        this.prevBookElement.addEventListener('dragover',(e)=>{
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
+        });
+
+        this.prevBookElement.addEventListener('drop',(e)=>{
+            console.log('drop');
+            console.log(e.dataTransfer.getData('bookid'));
+            console.log(e.dataTransfer.getData('booktitle'));
+        });
     }
 
     public set active (bool:Boolean){
@@ -679,8 +709,17 @@ class TreeCMSBookInfo {
 
         bookElement.classList.add('tree-cms_prevBook');
         bookElement.classList.add('tree-cms_linkedBook');
+        bookElement.setAttribute('draggable','true');
         bookElement.appendChild(Util.createIcon('fa-book'));
         bookElement.appendChild(bookTitleElement);
+
+        bookElement.addEventListener('dragstart',(e)=>{
+            dragSource = <HTMLElement>e.target;
+            e.dataTransfer.setData('bookid',(<number>bookInfo['id']).toString());
+            e.dataTransfer.setData('booktitle',bookInfo['title']);
+        });
+
+        bookElement.setAttribute('bookid',bookInfo['id']);
 
         return bookElement;
     }
