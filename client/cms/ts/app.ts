@@ -672,14 +672,42 @@ class TreeCMSBook {
 
     //prevBooksにnextBooksにあるbookを渡す
     public nextSend = (id:number)=>{
-        this.prevBooks = this.prevBooks.filter((prevID)=>{return (id !== prevID)});
-        this.nextBooks.push(id);
+        let sendBool = false;
+
+        this.prevBooks.forEach((prevID)=>{
+            if(id === prevID){
+                sendBool = true;
+            }
+        });
+
+        console.log(sendBool);
+
+        if(!sendBool){
+            return false;
+        }else{
+            this.prevBooks = this.prevBooks.filter((prevID)=>{return (id !== prevID)});
+            this.nextBooks.push(id);
+            return true;
+        }
     }
 
     //nextBooksにprevBooksにあるbookを渡す
     public prevSend = (id:number)=>{
-        this.nextBooks = this.nextBooks.filter((nextID)=>{return (id !== nextID)});
-        this.prevBooks.push(id);
+        let sendBool = false;
+
+        this.nextBooks.forEach((nextID)=>{
+            if(id === nextID){
+                sendBool = true;
+            }
+        });
+
+        if(!sendBool){
+            return false;
+        }else{
+            this.nextBooks = this.nextBooks.filter((nextID)=>{return (id !== nextID)});
+            this.prevBooks.push(id);
+            return true;
+        }
     }
 
     //bookの情報を取得するgetter
@@ -733,9 +761,10 @@ class TreeCMSBookInfo {
                     this.prevBookElement.appendChild(bookElement);
                 }
             }else if(droptype === 'send'){
-                this.editBook.prevSend(id);
-                this.nextBookElement.removeChild(this.nextBookElement.querySelector('div[bookid="'+id+'"]'));
-                this.prevBookElement.appendChild(bookElement);
+                if(this.editBook.prevSend(id)){
+                    this.nextBookElement.removeChild(this.nextBookElement.querySelector('div[bookid="'+id+'"]'));
+                    this.prevBookElement.appendChild(bookElement);
+                }
             }
         });
 
@@ -761,9 +790,10 @@ class TreeCMSBookInfo {
                     this.nextBookElement.appendChild(bookElement);
                 }
             }else if(droptype === 'send'){
-                this.editBook.nextSend(id);
-                this.prevBookElement.removeChild(this.prevBookElement.querySelector('div[bookid="'+id+'"]'));
-                this.nextBookElement.appendChild(bookElement);
+                if(this.editBook.nextSend(id)){
+                    this.prevBookElement.removeChild(this.prevBookElement.querySelector('div[bookid="'+id+'"]'));
+                    this.nextBookElement.appendChild(bookElement);
+                }
             }
         });
     }
