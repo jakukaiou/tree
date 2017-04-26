@@ -286,7 +286,7 @@ class TreeCMSBookBar {
             element.classList.add('tree-cms_book');
             element.id = 'book-'+this.nextBookID;
             this.bookList.appendChild(element);
-            //tmp
+
             this.books[this.nextBookID] = new TreeCMSBook(this.nextBookID,'#book-'+this.nextBookID,this,this.bookInfo,this.editor,this.toolbar,bookInfoData,bookContentData,autoBool);
             this.nextBookID++;
         }
@@ -349,7 +349,9 @@ class TreeCMSBookBar {
 
     //渡されたブックのprevBookの名前リストを返す
     public prevBookInfo = (book:TreeCMSBook)=>{
-        let prevBookIDs = book.prevBooks;
+        let bookInfo = book.info;
+
+        let prevBookIDs = bookInfo.prev;
         let prevBookArray:Array<Object> = [];
 
         prevBookIDs.map((bookID)=>{
@@ -361,7 +363,9 @@ class TreeCMSBookBar {
 
     //渡されたブックのnextBookの名前リストを返す
     public nextBookInfo = (book:TreeCMSBook)=>{
-        let nextBookIDs = book.nextBooks;
+        let bookInfo = book.info;
+
+        let nextBookIDs = bookInfo.next;
         let nextBookArray:Array<Object> = [];
 
         nextBookIDs.map((bookID)=>{
@@ -381,7 +385,7 @@ class TreeCMSBook {
     private nextPageID:number;
 
     //ブックの情報を開く画面 ブック自体の情報を編集する時にアクティブにする
-    private bookInfo:TreeCMSBookInfo;
+    public bookInfo:TreeCMSBookInfo;
     //ページのエディタ画面 ページ編集時にアクティブにする
     public bookEditor:TreeCMSEditor;
     //ブックのツールバー
@@ -390,13 +394,13 @@ class TreeCMSBook {
     private base:TreeCMSBookBar;
 
     //ブックのタイトルが入る
-    public title:string;
+    private title:string;
 
     //prevBookのID配列が入る
-    public prevBooks:Array<number>;
+    private prevBooks:Array<number>;
 
     //nextBookのID配列が入る
-    public nextBooks:Array<number>;
+    private nextBooks:Array<number>;
 
     //ページの内容が入る
     public pages:Array<Object>;
@@ -469,8 +473,10 @@ class TreeCMSBook {
                     this.base.unlock();
                     bookTitleDispElement.style.display = 'inline';
                     bookTitleInputElement.style.display = 'none';
-                    this.title = bookTitleInputElement.value;
-                    bookTitleDispElement.innerHTML = bookTitleInputElement.value;
+
+                    let bookInfo = this.info;
+                    bookInfo.title = bookTitleInputElement.value;
+                    this.bookInfoUpdate(bookInfo);
                 }
             }
         });
@@ -570,7 +576,7 @@ class TreeCMSBook {
                 }else{
                     this.base.unlock();
                     pageTitleDispElement.style.display = 'inline';
-                    this.pages[pageID]['title'] = pageTitleInputElement.value
+                    this.pages[pageID]['title'] = pageTitleInputElement.value;
                     pageTitleDispElement.innerHTML = this.pages[pageID]['title'];
                     pageTitleInputElement.style.display = 'none';
                 }
@@ -616,6 +622,119 @@ class TreeCMSBook {
     //ブックのページを置き換える
     public pageUpdate = (pageID,pageData:Object)=>{
         this.pages[pageID] = pageData;
+    }
+
+    public bookInfoUpdate = (bookInfo:any)=>{
+        this.info = bookInfo;
+
+        let bookTitleDispElement:HTMLLabelElement = <HTMLLabelElement>this.element.querySelector('.tree-cms_bookTitleContainer label');
+        let bookTitleInputElement:HTMLInputElement = <HTMLInputElement>this.element.querySelector('.tree-cms_bookTitleContainer input');
+
+        bookTitleInputElement.value = bookInfo['title'];
+        bookTitleDispElement.innerHTML = bookTitleInputElement.value;
+
+        this.bookOpen();
+    }
+
+    //bookの情報を取得するgetter
+    public get info (){
+        return {
+            id:this.bookID,
+            title:this.title,
+            prev:this.prevBooks,
+            next:this.nextBooks
+        }
+    }
+
+    public set info(info){
+        this.bookID = info['id'];
+        this.title = info['title'];
+        this.prevBooks = info['prev'];
+        this.nextBooks = info['next'];
+    }
+}
+
+class TreeCMSBookInfo {
+    private element:HTMLElement;
+    private titleElement:HTMLInputElement;
+    private prevBookElement:HTMLElement;
+    private nextBookElement:HTMLElement;
+    private editBook:TreeCMSBook;
+
+    private prevBookInfo:Array<Object>;
+    private nextBookInfo:Array<Object>;
+
+    private dragFlag:Boolean;
+
+    private bookID:number;
+    private prevBooks:Array<number>;
+    private nextBooks:Array<number>;
+
+    constructor(){
+        this.element = <HTMLElement>document.querySelector('.tree-cms_bookInfoArea');
+        this.titleElement = <HTMLInputElement>document.querySelector('.tree-cms_bookTitleInput input');
+        this.prevBookElement = <HTMLElement>document.querySelector('.tree-cms_prevBooks');
+        this.nextBookElement = <HTMLElement>document.querySelector('.tree-cms_nextBooks');
+
+        this.dragFlag = false;
+
+        this.prevBookElement.addEventListener('dragenter',(e)=>{
+            //console.log('(dragenter)');
+        });
+
+        this.prevBookElement.addEventListener('dragover',(e)=>{
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
+        });
+
+        this.prevBookElement.addEventListener('drop',(e)=>{
+            //ブックのドロップ処理
+            let id = Number(e.dataTransfer.getData('bookid'));
+            let title = e.dataTransfer.getData('booktitle');
+            let droptype = e.dataTransfer.getData('droptype');
+
+            let bookElement = this.createBookDisp({id:id,title:title});
+
+            if(droptype === 'add'){
+                if(this.prevAdd(id)){
+                    this.prevBookElement.appendChild(bookElement);
+                }
+            }else if(droptype === 'send'){
+                if(this.prevSend(id)){
+                    this.nextBookElement.removeChild(this.nextBookElement.querySelector('div[bookid="'+id+'"]'));
+                    this.prevBookElement.appendChild(bookElement);
+                }
+            }
+        });
+
+        this.nextBookElement.addEventListener('dragenter',(e)=>{
+            //console.log('(dragenter)');
+        });
+
+        this.nextBookElement.addEventListener('dragover',(e)=>{
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
+        });
+
+        this.nextBookElement.addEventListener('drop',(e)=>{
+            //ブックのドロップ処理
+            let id = Number(e.dataTransfer.getData('bookid'));
+            let title = e.dataTransfer.getData('booktitle');
+            let droptype = e.dataTransfer.getData('droptype');
+
+            let bookElement = this.createBookDisp({id:id,title:title});
+
+            if(droptype === 'add'){
+                if(this.nextAdd(id)){
+                    this.nextBookElement.appendChild(bookElement);
+                }
+            }else if(droptype === 'send'){
+                if(this.nextSend(id)){
+                    this.prevBookElement.removeChild(this.prevBookElement.querySelector('div[bookid="'+id+'"]'));
+                    this.nextBookElement.appendChild(bookElement);
+                }
+            }
+        });
     }
 
     //prevBooksに新規IDを追加する
@@ -680,8 +799,6 @@ class TreeCMSBook {
             }
         });
 
-        console.log(sendBool);
-
         if(!sendBool){
             return false;
         }else{
@@ -710,94 +827,6 @@ class TreeCMSBook {
         }
     }
 
-    //bookの情報を取得するgetter
-    public get info (){
-        return {
-            id:this.bookID,
-            title:this.title,
-            prev:this.prevBooks,
-            next:this.nextBooks
-        }
-    }
-}
-
-class TreeCMSBookInfo {
-    private element:HTMLElement;
-    private prevBookElement:HTMLElement;
-    private nextBookElement:HTMLElement;
-    private editBook:TreeCMSBook;
-
-    private prevBookInfo:Array<Object>;
-    private nextBookInfo:Array<Object>;
-
-    private dragFlag:Boolean;
-
-    constructor(){
-        this.element = <HTMLElement>document.querySelector('.tree-cms_bookInfoArea');
-        this.prevBookElement = <HTMLElement>document.querySelector('.tree-cms_prevBooks');
-        this.nextBookElement = <HTMLElement>document.querySelector('.tree-cms_nextBooks');
-
-        this.dragFlag = false;
-
-        this.prevBookElement.addEventListener('dragenter',(e)=>{
-            console.log('(dragenter)');
-        });
-
-        this.prevBookElement.addEventListener('dragover',(e)=>{
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'copy';
-        });
-
-        this.prevBookElement.addEventListener('drop',(e)=>{
-            //ブックのドロップ処理
-            let id = Number(e.dataTransfer.getData('bookid'));
-            let title = e.dataTransfer.getData('booktitle');
-            let droptype = e.dataTransfer.getData('droptype');
-
-            let bookElement = this.createBookDisp({id:id,title:title});
-
-            if(droptype === 'add'){
-                if(this.editBook.prevAdd(id)){
-                    this.prevBookElement.appendChild(bookElement);
-                }
-            }else if(droptype === 'send'){
-                if(this.editBook.prevSend(id)){
-                    this.nextBookElement.removeChild(this.nextBookElement.querySelector('div[bookid="'+id+'"]'));
-                    this.prevBookElement.appendChild(bookElement);
-                }
-            }
-        });
-
-        this.nextBookElement.addEventListener('dragenter',(e)=>{
-            console.log('(dragenter)');
-        });
-
-        this.nextBookElement.addEventListener('dragover',(e)=>{
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'copy';
-        });
-
-        this.nextBookElement.addEventListener('drop',(e)=>{
-            //ブックのドロップ処理
-            let id = Number(e.dataTransfer.getData('bookid'));
-            let title = e.dataTransfer.getData('booktitle');
-            let droptype = e.dataTransfer.getData('droptype');
-
-            let bookElement = this.createBookDisp({id:id,title:title});
-
-            if(droptype === 'add'){
-                if(this.editBook.nextAdd(id)){
-                    this.nextBookElement.appendChild(bookElement);
-                }
-            }else if(droptype === 'send'){
-                if(this.editBook.nextSend(id)){
-                    this.prevBookElement.removeChild(this.prevBookElement.querySelector('div[bookid="'+id+'"]'));
-                    this.nextBookElement.appendChild(bookElement);
-                }
-            }
-        });
-    }
-
     public set active (bool:Boolean){
         if(bool){
             this.element.style.display = 'flex';
@@ -807,8 +836,17 @@ class TreeCMSBookInfo {
     }
 
     public open = (book:TreeCMSBook,bookBar:TreeCMSBookBar)=>{
+        let bookInfo = book.info;
+
         this.editBook = book;
         this.active = true;
+
+        this.titleElement.value = bookInfo.title;
+
+        this.bookID = bookInfo.id;
+        //オブジェクトの値渡し
+        this.prevBooks = bookInfo.prev.concat();
+        this.nextBooks = bookInfo.next.concat();
 
         this.prevBookInfo = bookBar.prevBookInfo(book);
         this.nextBookInfo = bookBar.nextBookInfo(book);
@@ -857,6 +895,15 @@ class TreeCMSBookInfo {
 
         return bookElement;
     }
+
+    public get editInfo () {
+        return {
+            id:this.bookID,
+            title:this.titleElement.value,
+            prev:this.prevBooks,
+            next:this.nextBooks
+        }
+    }
 }
 
 class TreeCMSToolBar {
@@ -892,7 +939,7 @@ class TreeCMSToolBar {
                     
                     break;
                 case EDITMODE.BOOK:
-
+                    this.book.bookInfoUpdate(this.book.bookInfo.editInfo);
                     break;
                 case EDITMODE.PAGE:
                     this.book.pageUpdate(this.pageID,this.book.bookEditor.exportData());
@@ -922,9 +969,11 @@ class TreeCMSToolBar {
 
     //ブック情報編集のツールバーを開く
     public bookEditOpen = (book:TreeCMSBook)=>{
+        let bookInfo = book.info;
+
         this.book = book;
 
-        let titleString:string = '<i class="fa fa-book" aria-hidden="true"></i><label>'+book.title+'</label>';
+        let titleString:string = '<i class="fa fa-book" aria-hidden="true"></i><label>'+bookInfo.title+'</label>';
         this.targetTitleElement.innerHTML = titleString;
 
         this.editmode = EDITMODE.BOOK;
@@ -936,10 +985,12 @@ class TreeCMSToolBar {
 
     //ページ編集のツールバーを開く
     public pageEditOpen = (book:TreeCMSBook,pageID:number)=>{
+        let bookInfo = book.info;
+
         this.book = book;
         this.pageID = pageID;
 
-        let titleString:string = '<i class="fa fa-book" aria-hidden="true"></i><label>'+book.title+'</label>'
+        let titleString:string = '<i class="fa fa-book" aria-hidden="true"></i><label>'+bookInfo.title+'</label>'
                                + ' >'
                                + '<i class="fa fa-file" aria-hidden="true"></i><label>'+book.pages[pageID]['title']+'</label>';
         this.targetTitleElement.innerHTML = titleString;
