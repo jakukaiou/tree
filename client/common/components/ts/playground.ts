@@ -1,4 +1,3 @@
-//TODO: UPDATE用の関数を作成する
 import TreeComponent from './component';
 
 import '../scss/playground.scss';

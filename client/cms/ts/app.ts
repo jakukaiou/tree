@@ -1,6 +1,8 @@
 //TODO:highlight.jsの導入を検討？
+//ページ・ブックの削除機能
+//保存処理等の各処理時にアラートを表示する
 //githubのtasklistなどを追加する
-//github-markdownで <kbd>shift</kbd> + <kbd>command</kbd> + <kbd>3</kbd> でkey表示できる
+//firebase導入
 
 import 'github-markdown-css';
 
@@ -1003,18 +1005,38 @@ class TreeCMSToolBar {
     }
 }
 
+//アラート時のモーダルウインドウを表示
+class TreeCMSModal {
+    private element:HTMLElement;
+
+    constructor(){
+        this.element = <HTMLElement>document.querySelector('.tree-cms_modal');
+        this.active = false;
+    }
+
+    public set active(bool:Boolean){
+        if(bool){
+            this.element.classList.add('is-active');
+        }else{
+            this.element.classList.remove('is-active');
+        }
+    }
+}
+
 class TreeCMS {
     private bookbar:TreeCMSBookBar;
 
     private editor:TreeCMSEditor;
     private bookInfo:TreeCMSBookInfo;
     private toolbar:TreeCMSToolBar;
+    private modal:TreeCMSModal;
 
     constructor(){
         window.onload = ()=>{
             this.editor = new TreeCMSEditor();
             this.bookInfo = new TreeCMSBookInfo();
             this.toolbar = new TreeCMSToolBar();
+            this.modal = new TreeCMSModal();
 
             this.bookbar = new TreeCMSBookBar(bookData,bookPages,this.editor,this.bookInfo,this.toolbar);
         }
